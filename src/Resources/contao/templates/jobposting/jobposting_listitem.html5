@@ -1,0 +1,13 @@
+
+<div class="job-item">
+<?php if ($this->href): ?><a href="<?= $this->href ?>"><?php endif; ?>
+
+<h3><?= $this->title ?></h3>
+<?php if ($this->keywords): ?>
+    <ul class="job-item_keywords">
+        <li><?= implode('</li><li>', $this->keywords) ?></li>
+    </ul>
+<?php endif; ?>
+
+<?php if ($this->href): ?><button type="button">Weitere Informationen</button></a><?php endif; ?>
+</div>
