@@ -2,6 +2,7 @@
 
 namespace JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models;
 
+use Contao\Date;
 use Contao\Model;
 
 class SimpleJobsPostingModel extends Model {
@@ -67,6 +68,25 @@ class SimpleJobsPostingModel extends Model {
 		}
 
 		return static::findBy($arrColumns, $intPid, $arrOptions);
+	}
+
+    /**
+     * @param $varId
+     * @param array $arrOptions
+     * @return Model|Model[]|Model\Collection|SimpleJobsPostingModel|null
+     */
+	public static function findPublishedByIdOrAlias($varId, array $arrOptions=array())
+	{
+		$t = static::$strTable;
+		$arrColumns = !preg_match('/^[1-9]\d*$/', $varId) ? array("$t.alias=?") : array("$t.id=?");
+
+		if (!static::isPreviewMode($arrOptions))
+		{
+			$time = Date::floorToMinute();
+			$arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
+		}
+
+		return static::findOneBy($arrColumns, $varId, $arrOptions);
 	}
 
 }

@@ -62,7 +62,7 @@ class ModuleSimpleJobsReader extends Module {
 
         $postingTemplate = new \FrontendTemplate($this->simplejobs_postingtemplate);
 
-        $jobPostingModel = SimpleJobsPostingModel::findByIdOrAlias(\Input::get('items'));
+        $jobPostingModel = SimpleJobsPostingModel::findPublishedByIdOrAlias(\Input::get('items'));
 
         if (null === $jobPostingModel)
 		{
