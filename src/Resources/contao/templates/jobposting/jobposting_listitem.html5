@@ -1,8 +1,8 @@
 
 <div class="job-item">
 <?php if ($this->href): ?><a href="<?= $this->href ?>"><?php endif; ?>
-
 <h3><?= $this->title ?></h3>
+<?php if ($this->href): ?></a><?php endif; ?>
 
 <?php if (!empty($this->locations)): ?>
 	<?php foreach($this->locations as $l): ?>
@@ -17,5 +17,5 @@
     </ul>
 <?php endif; ?>
 
-<?php if ($this->href): ?><button type="button">Weitere Informationen</button></a><?php endif; ?>
+<?php if ($this->href): ?><button type="button">Weitere Informationen</button><?php endif; ?>
 </div>
