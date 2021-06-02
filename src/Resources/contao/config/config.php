@@ -14,6 +14,7 @@ $GLOBALS['BE_MOD']['content']['simple_jobs'] = [
 $GLOBALS['FE_MOD']['simple_jobs'] = [
     'simplejobslist'   => \JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Modules\ModuleSimpleJobsList::class,
     'simplejobsreader' => \JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Modules\ModuleSimpleJobsReader::class,
+    'simplejobsfilter' => \JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Modules\ModuleSimpleJobsFilter::class,
 ];
 
 // Content elements

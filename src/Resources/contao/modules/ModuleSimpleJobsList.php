@@ -57,6 +57,12 @@ class ModuleSimpleJobsList extends Module {
         if ($this->numberOfItems > 0) {
             $arrOptions['limit'] = $this->numberOfItems;
         }
+        if (\Input::get('location')) {
+            $arrOptions['location'] =\Input::get('location');
+        }
+        if (\Input::get('type')) {
+            $arrOptions['employmentType'] =\Input::get('type');
+        }
 
         $jobPostings = SimpleJobsPostingModel::findPublishedByPids($this->simplejobs_organisations);
         if (null !== $jobPostings) {
