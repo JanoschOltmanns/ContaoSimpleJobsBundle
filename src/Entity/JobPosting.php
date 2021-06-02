@@ -111,17 +111,13 @@ class JobPosting {
 
     public function getTemplateData() {
 
-      $templateData                   = [];
-      $templateData['title']          = $this->contaoModel->title;
-      $templateData['description']    = $this->contaoModel->description;
-      $templateData['keywords']       = $this->getKeywords();
-      $templateData['href']           = $this->getDetailLink();
-      $templateData['locations']      = $this->getLocations();
-      $templateData['datePosted']     = $this->getPostingDate(),
-      $templateData['description']    = $this->getDescription(),
-      $templateData['employmentType'] = $this->getEmploymentTypes(),
+        $templateData = [];
+        $templateData['title'] = $this->contaoModel->title;
+        $templateData['description'] = $this->contaoModel->description;
+        $templateData['keywords'] = $this->getKeywords();
+        $templateData['href'] = $this->getDetailLink();
 
-      return $templateData;
+        return $templateData;
 
     }
 
