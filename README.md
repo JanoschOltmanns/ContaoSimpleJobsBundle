@@ -4,3 +4,17 @@ Ein Bundle um in Contao relativ _simpel_ Stellenanzeigen zu verwalten. Hauptauge
 
 - Listenanzeige
 - Detailanzeige inkl. der Möglichkeit strukturierte Daten zu generieren
+
+## Inserttags
+
+```php
+{{jobposting::title}}
+
+{{jobposting::alias}}
+
+{{jobposting::datePosted}}
+
+{{jobposting::description}}
+
+{{jobposting::keywords}}
+```
