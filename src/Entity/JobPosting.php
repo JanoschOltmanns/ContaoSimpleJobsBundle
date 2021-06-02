@@ -117,9 +117,9 @@ class JobPosting {
       $templateData['keywords']       = $this->getKeywords();
       $templateData['href']           = $this->getDetailLink();
       $templateData['locations']      = $this->getLocations();
-      $templateData['datePosted']     = $this->getPostingDate(),
-      $templateData['description']    = $this->getDescription(),
-      $templateData['employmentType'] = $this->getEmploymentTypes(),
+      $templateData['datePosted']     = $this->getPostingDate();
+      $templateData['description']    = $this->getDescription();
+      $templateData['employmentType'] = $this->getEmploymentTypes();
 
       return $templateData;
 
