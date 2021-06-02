@@ -3,6 +3,8 @@
 <?php if ($this->href): ?><a href="<?= $this->href ?>"><?php endif; ?>
 
 <h3><?= $this->title ?></h3>
+<small><?= implode(', ', $this->employmentType) ?></small>
+
 <?php if ($this->keywords): ?>
     <ul class="job-item_keywords">
         <li><?= implode('</li><li>', $this->keywords) ?></li>

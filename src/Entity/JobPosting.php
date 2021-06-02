@@ -39,10 +39,21 @@ class JobPosting {
 
     }
 
-    public function getEmploymentTypes() {
+    public function getEmploymentTypes($strLanguage = false) {
 
-        return StringUtil::deserialize($this->contaoModel->employmentType);
+        if (!isset($strLanguage) || $strLanguage === false) {
+            return StringUtil::deserialize($this->contaoModel->employmentType);
+        }
 
+        \Contao\System::loadLanguageFile('tl_simple_jobs_posting');
+
+        $arrEmploymentType = [];
+        foreach (StringUtil::deserialize($this->contaoModel->employmentType) as $value) {
+          $arrEmploymentType[$value] = $GLOBALS['TL_LANG']['tl_simple_jobs_posting']['employmentTypeReference'][$value];
+        }
+
+        return $arrEmploymentType;
+        
     }
 
     public function getPostingDate($dateFormat='') {
@@ -112,14 +123,13 @@ class JobPosting {
     public function getTemplateData() {
 
       $templateData                   = [];
-      $templateData['title']          = $this->contaoModel->title;
-      $templateData['description']    = $this->contaoModel->description;
+      $templateData['title']          = $this->getTitle();
       $templateData['keywords']       = $this->getKeywords();
       $templateData['href']           = $this->getDetailLink();
       $templateData['locations']      = $this->getLocations();
       $templateData['datePosted']     = $this->getPostingDate();
       $templateData['description']    = $this->getDescription();
-      $templateData['employmentType'] = $this->getEmploymentTypes();
+      $templateData['employmentType'] = $this->getEmploymentTypes(true);
 
       return $templateData;
 
