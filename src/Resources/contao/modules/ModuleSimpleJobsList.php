@@ -50,7 +50,13 @@ class ModuleSimpleJobsList extends Module {
     protected function compile()
     {
 
-        $postings = [];
+        $postings   = [];
+        $arrOptions = [];
+
+        // Maximum number of items
+        if ($this->numberOfItems > 0) {
+            $arrOptions['limit'] = $this->numberOfItems;
+        }
 
         $jobPostings = SimpleJobsPostingModel::findPublishedByPids($this->simplejobs_organisations);
         if (null !== $jobPostings) {
