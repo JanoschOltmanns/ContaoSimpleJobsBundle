@@ -32,3 +32,4 @@ $GLOBALS['TL_MODELS']['tl_simple_jobs_posting'] = \JanoschOltmanns\ContaoSimpleJ
  * Register Hooks
  */
 $GLOBALS['TL_HOOKS']['getSearchablePages'][] = array('JanoschOltmanns\\ContaoSimpleJobsBundle\\Contao\\Modules\\ModuleSimpleJobs', 'getSearchablePages');
+$GLOBALS['TL_HOOKS']['replaceInsertTags'][]  = array('JanoschOltmanns\\ContaoSimpleJobsBundle\\Contao\\Modules\\ModuleSimpleJobs', 'replaceInsertTags');

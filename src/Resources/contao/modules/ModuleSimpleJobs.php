@@ -104,4 +104,45 @@ class ModuleSimpleJobs extends \Contao\Frontend {
 		return $arrPages;
 	}
 
+	/**
+	 * Replace known Jobpostings insert tags.
+	 *
+	 * @param string $insertTag
+	 *
+	 * @return string|bool
+	 **/
+	public static function replaceInsertTags($insertTag)
+  {
+      $arrSplit        = \StringUtil::trimsplit('::', $insertTag);
+			$jobPostingModel = SimpleJobsPostingModel::findByIdOrAlias(\Input::get('items'));
+			
+			if ($arrSplit[0] == 'jobposting' && isset($jobPostingModel))
+      {
+          if (isset($arrSplit[1]))
+          {
+							switch ($arrSplit[1])
+							{
+									case 'title':
+	              		  return $jobPostingModel->title;
+
+									case 'alias':
+	              		  return $jobPostingModel->alias;
+
+									case 'datePosted':
+	              		  return $jobPostingModel->datePosted;
+
+									case 'description':
+	              		  return $jobPostingModel->description;
+
+									case 'keywords':
+	              		  return $jobPostingModel->keywords;
+
+							}
+          }
+      }
+
+      return false;
+
+  }
+
 }
