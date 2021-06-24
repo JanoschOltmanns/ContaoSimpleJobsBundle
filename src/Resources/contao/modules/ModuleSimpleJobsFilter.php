@@ -62,7 +62,7 @@ class ModuleSimpleJobsFilter extends Module {
       }
       while($objOrganisationsLocations->next()) {
         $arrOrganisationsLocations = array_merge($arrOrganisationsLocations, \StringUtil::deserialize($objOrganisationsLocations->locations));
-        $arrOrganisationsTypes     = array_merge($arrOrganisationsLocations, \StringUtil::deserialize($objOrganisationsLocations->employmentType));
+        $arrOrganisationsTypes     = array_merge($arrOrganisationsTypes, \StringUtil::deserialize($objOrganisationsLocations->employmentType));
       }
 
       foreach ($arrOrganisationsLocations as $value) {
