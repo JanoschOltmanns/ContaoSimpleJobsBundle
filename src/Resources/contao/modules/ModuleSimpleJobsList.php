@@ -64,7 +64,7 @@ class ModuleSimpleJobsList extends Module {
             $arrOptions['employmentType'] =\Input::get('type');
         }
 
-        $jobPostings = SimpleJobsPostingModel::findPublishedByPids($this->simplejobs_organisations);
+        $jobPostings = SimpleJobsPostingModel::findPublishedByPids($this->simplejobs_organisations, , $arrOptions);
         if (null !== $jobPostings) {
             while ($jobPostings->next()) {
 
