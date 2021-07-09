@@ -95,14 +95,14 @@ class JobPosting {
 
         if (null !== $organisation) {
 
-            $page = \PageModel::findWithDetails($organisation->jumpTo);
-
-            if ($absolute) {
-                $link = $page->getAbsoluteUrl((\Config::get('useAutoItem') ? '/' : '/items/') . ($this->contaoModel->alias ?: $this->contaoModel->id));
-            } else {
-                $link = $page->getFrontendUrl((\Config::get('useAutoItem') ? '/' : '/items/') . ($this->contaoModel->alias ?: $this->contaoModel->id));
+            if ( null !== ($page = \PageModel::findWithDetails($organisation->jumpTo)) )
+            {
+                if ($absolute) {
+                    $link = $page->getAbsoluteUrl((\Config::get('useAutoItem') ? '/' : '/items/') . ($this->contaoModel->alias ?: $this->contaoModel->id));
+                } else {
+                    $link = $page->getFrontendUrl((\Config::get('useAutoItem') ? '/' : '/items/') . ($this->contaoModel->alias ?: $this->contaoModel->id));
+                }
             }
-
         }
 
         return $link;
