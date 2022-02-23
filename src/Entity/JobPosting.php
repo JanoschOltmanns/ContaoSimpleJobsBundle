@@ -116,6 +116,7 @@ class JobPosting {
         $templateData['title'] = $this->contaoModel->title;
         $templateData['description'] = $this->contaoModel->description;
         $templateData['keywords'] = $this->getKeywords();
+        $templateData['locations'] = $this->getLocations();
         $templateData['href'] = $this->getDetailLink();
 
         return $templateData;
