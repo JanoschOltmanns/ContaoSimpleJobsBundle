@@ -5,6 +5,7 @@ namespace JanoschOltmanns\ContaoSimpleJobsBundle\Entity;
 use Contao\Config;
 use Contao\Controller;
 use Contao\Date;
+use Contao\PageModel;
 use Contao\StringUtil;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsPostingModel;
 
@@ -95,12 +96,12 @@ class JobPosting {
 
         if (null !== $organisation) {
 
-            if ( null !== ($page = \PageModel::findWithDetails($organisation->jumpTo)) )
+            if ( null !== ($page = PageModel::findWithDetails($organisation->jumpTo)) )
             {
                 if ($absolute) {
-                    $link = $page->getAbsoluteUrl((\Config::get('useAutoItem') ? '/' : '/items/') . ($this->contaoModel->alias ?: $this->contaoModel->id));
+                    $link = $page->getAbsoluteUrl((Config::get('useAutoItem') ? '/' : '/items/') . ($this->contaoModel->alias ?: $this->contaoModel->id));
                 } else {
-                    $link = $page->getFrontendUrl((\Config::get('useAutoItem') ? '/' : '/items/') . ($this->contaoModel->alias ?: $this->contaoModel->id));
+                    $link = $page->getFrontendUrl((Config::get('useAutoItem') ? '/' : '/items/') . ($this->contaoModel->alias ?: $this->contaoModel->id));
                 }
             }
         }
