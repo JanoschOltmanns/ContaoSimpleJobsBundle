@@ -49,6 +49,13 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_organisation'] = array
         ),
         'global_operations' => array
         (
+            'categories' => array
+            (
+                'href'                => 'table=tl_simple_jobs_category',
+                'class'               => 'header_sync',
+                'attributes'          => 'onclick="Backend.getScrollOffset()"',
+                //'button_callback'     => array('tl_news_archive', 'manageFeeds')
+            ),
             'all' => array
             (
                 'label' => &$GLOBALS['TL_LANG']['MSC']['all'],

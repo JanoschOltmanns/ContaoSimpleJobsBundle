@@ -6,5 +6,16 @@
             <li><?= implode('</li><li>', $this->keywords) ?></li>
         </ul>
     <?php endif; ?>
+
     <?= $this->description ?>
+
+    <?php if ($this->enclosure): ?>
+        <ul class="enclosure">
+            <?php foreach ($this->enclosure as $enclosure): ?>
+                <li class="download-element ext-<?= $enclosure['extension'] ?>">
+                    <a href="<?= $enclosure['href'] ?>" title="<?= $enclosure['title'] ?>"><?= $enclosure['link'] ?> <span class="size">(<?= $enclosure['filesize'] ?>)</span></a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
 </div>

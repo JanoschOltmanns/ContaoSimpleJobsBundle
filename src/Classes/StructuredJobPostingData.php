@@ -33,6 +33,37 @@ class StructuredJobPostingData {
             'title' => $this->jobPosting->getTitle()
         ];
 
+        if (null !== $validThrough = $this->jobPosting->getValidThrough('Y-m-d')) {
+            $jsonData['validThrough'] = $validThrough;
+        }
+
+        if ($this->jobPosting->hasSalaryInformations()) {
+            if ($this->jobPosting->hasSalaryRange()) {
+                $jsonData['baseSalary'] = [
+                    '@type' => 'MonetaryAmount',
+                    'currency' => $this->jobPosting->getSalaryCurrency(),
+                    'value' => [
+                        '@type' => 'QuantitativeValue',
+                        'minValue' => $this->jobPosting->getSalaryValueMin(),
+                        'maxValue' => $this->jobPosting->getSalaryValueMax(),
+                        'unitText' => $this->jobPosting->getSalaryUnitText()
+                    ]
+                ];
+            } else {
+                $jsonData['baseSalary'] = [
+                    '@type' => 'MonetaryAmount',
+                    'currency' => $this->jobPosting->getSalaryCurrency(),
+                    'value' => [
+                        '@type' => 'QuantitativeValue',
+                        'value' => $this->jobPosting->getSalaryValue(),
+                        'unitText' => $this->jobPosting->getSalaryUnitText()
+                    ]
+                ];
+            }
+        }
+
+        $this->jobPosting->getSalaryValue();
+
         $locations = $this->jobPosting->getLocations();
 
         foreach ($locations as $location) {
