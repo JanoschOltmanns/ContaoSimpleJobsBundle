@@ -11,10 +11,9 @@ class Organisation {
     private $contaoModel = null;
 
     private $name = '';
-
     private $website = '';
-
     private $logo = null;
+    private $teaser = '';
 
     public function __construct(SimpleJobsOrganisationModel $contaoOrganisationModel)
     {
@@ -33,22 +32,24 @@ class Organisation {
         {
             $this->logo = \Environment::get('base') . $objFile->path;
         }
+
+        $this->teaser = (string) $this->contaoModel->teaser;
     }
 
     public function getName() {
-
         return $this->name;
-
     }
 
     public function getWebsite() {
-
         return $this->website;
-
     }
 
     public function getLogo() {
         return $this->logo;
+    }
+
+    public function getTeaser() {
+        return $this->teaser;
     }
 
 

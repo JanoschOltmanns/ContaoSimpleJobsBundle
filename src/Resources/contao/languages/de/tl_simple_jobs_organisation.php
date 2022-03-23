@@ -16,6 +16,7 @@ $GLOBALS['TL_LANG']['tl_simple_jobs_organisation']['publish_legend'] = 'Veröffe
 $GLOBALS['TL_LANG']['tl_simple_jobs_organisation']['name'] = ['Name des Unternehmen', 'Bitte geben Sie den Namen des Unternehmen ein.'];
 $GLOBALS['TL_LANG']['tl_simple_jobs_organisation']['sameAs'] = ['Website', 'Bitte geben Sie die Website des Unternehmen ein.'];
 $GLOBALS['TL_LANG']['tl_simple_jobs_organisation']['logo'] = ['Logo', 'Bitte wählen Sie das Logo des Unternehmen aus.'];
+$GLOBALS['TL_LANG']['tl_simple_jobs_organisation']['teaser'] = ['Teaser', 'Hier können Sie einen optionalen Teaser-Text für das Unternehmen eingeben'];
 $GLOBALS['TL_LANG']['tl_simple_jobs_organisation']['published'] = ['Unternehmen veröffentlichen', 'Die Stellenanzeigen des Unternehmen auf der Webseite anzeigen.'];
 
 $GLOBALS['TL_LANG']['tl_simple_jobs_organisation']['jumpTo'] = ['Detailseite', 'Bitte wählen Sie die Seite aus, auf der ein entsprechendes Detail-Modul eingebunden ist.'];

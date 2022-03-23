@@ -96,7 +96,7 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_organisation'] = array
     // Palettes
     'palettes' => array
     (
-        'default' => '{title_legend},name,sameAs,logo;{settings_legend},jumpTo;{publish_legend},published'
+        'default' => '{title_legend},name,sameAs,logo,teaser;{settings_legend},jumpTo;{publish_legend},published'
     ),
 
     // Fields
@@ -132,6 +132,14 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_organisation'] = array
 			'inputType'               => 'fileTree',
 			'eval'                    => array('fieldType'=>'radio', 'filesOnly'=>true, 'extensions'=>Config::get('validImageTypes'), 'mandatory'=>true, 'tl_class'=>'clr'),
 			'sql'                     => "binary(16) NULL"
+        ],
+        'teaser' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_organisation']['teaser'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'textarea',
+            'eval'                    => array('rte'=>'tinyMCE', 'tl_class'=>'clr'),
+            'sql'                     => "text NULL"
         ],
 		'jumpTo' => array
 		(

@@ -166,6 +166,15 @@ class JobPosting {
         $templateData['href'] = $this->getDetailLink();
         $templateData['datePosted']     = $this->getPostingDate();
         $templateData['employmentTypes'] = $this->getReadableEmploymentTypes();
+        $organisation = $this->getOrganisation();
+        if (null !== $organisation) {
+            $templateData['organisation'] = [
+                'name' => $organisation->getName(),
+                'website' => $organisation->getWebsite(),
+                'logo' => $organisation->getLogo(),
+                'teaser' => $organisation->getTeaser()
+            ];
+        }
 
         if ($withContaoModel) {
             $templateData['contaoModel'] = $this->contaoModel;
