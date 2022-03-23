@@ -164,6 +164,7 @@ class JobPosting {
         $templateData['keywords'] = $this->getKeywords();
         $templateData['locations'] = $this->getLocations();
         $templateData['href'] = $this->getDetailLink();
+        $templateData['datePosted']     = $this->getPostingDate();
         $templateData['employmentTypes'] = $this->getReadableEmploymentTypes();
 
         if ($withContaoModel) {

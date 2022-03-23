@@ -30,6 +30,7 @@ class SimpleJobsPostingModel extends Model {
 
 		$t = static::$strTable;
 		$arrColumns = array("$t.pid IN(" . implode(',', array_map('\intval', $arrPids)) . ")");
+		$varValue   = null;
 
 		if (!static::isPreviewMode($arrOptions))
 		{
@@ -41,7 +42,19 @@ class SimpleJobsPostingModel extends Model {
 			$arrOptions['order'] = "$t.datePosted DESC";
 		}
 
-		return static::findBy($arrColumns, null, $arrOptions);
+		if (isset($arrOptions['employmentType']))
+		{
+			$arrColumns['employmentType'] = "$t.employmentType LIKE ?";
+			$varValue[] = "%" . $arrOptions['employmentType'] . "%";
+		}
+
+		if (isset($arrOptions['location']))
+		{
+			$arrColumns['locations'] = "$t.locations LIKE ?";
+			$varValue[] = "%\"" . $arrOptions['location'] . "\"%";
+		}
+
+		return static::findBy($arrColumns, $varValue, $arrOptions);
 	}
 
     /**
@@ -123,5 +136,25 @@ class SimpleJobsPostingModel extends Model {
 
         return static::findOneBy($arrColumns, $varId, $arrOptions);
 	}
+	
+	/**
+	 * Find all published Locations by their parent ID
+	 *
+	 * @param int   $intPid     The parent ID
+	 * @param array $arrOptions An optional options array
+	 *
+	 * @return Model\Collection|SimpleJobsPostingModel[]|SimpleJobsPostingModel|null A collection of models or null if there are no FAQs
+	 */
+	public static function findLocationsByPids($intPid, array $arrOptions=array())
+	{
+		$t = static::$strTable;
+		$arrColumns = array("$t.pid=?");
 
+		if (!static::isPreviewMode($arrOptions))
+		{
+			$arrColumns[] = "$t.published='1'";
+		}
+
+		return static::findBy($arrColumns, $intPid, $arrOptions);
+	}
 }

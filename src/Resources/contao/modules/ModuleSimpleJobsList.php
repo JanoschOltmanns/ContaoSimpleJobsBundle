@@ -52,6 +52,18 @@ class ModuleSimpleJobsList extends Module {
     {
 
         $postings = [];
+        $arrOptions = [];
+
+        // Maximum number of items
+        if ($this->numberOfItems > 0) {
+            $arrOptions['limit'] = $this->numberOfItems;
+        }
+        if (\Input::get('location')) {
+            $arrOptions['location'] =\Input::get('location');
+        }
+        if (\Input::get('type')) {
+            $arrOptions['employmentType'] =\Input::get('type');
+        }
 
         if ($this->simplejobs_addCategoryFilter) {
             $categories = StringUtil::deserialize($this->simplejobs_categories, true);

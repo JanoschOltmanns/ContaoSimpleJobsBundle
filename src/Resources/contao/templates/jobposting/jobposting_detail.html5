@@ -1,6 +1,8 @@
 
 <div class="job-item">
     <h1 class="h2"><?= $this->title ?></h1>
+    <small><?= implode(', ', $this->employmentType) ?></small>
+    
     <?php if ($this->keywords): ?>
         <ul class="job-item_keywords">
             <li><?= implode('</li><li>', $this->keywords) ?></li>
