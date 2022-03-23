@@ -81,7 +81,15 @@ class ModuleSimpleJobsReader extends Module {
 			$objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($jobPosting->getTitle()));
 		}
 
-        $postingTemplate->setData($jobPosting->getTemplateData());
+        $postingTemplate->setData($jobPosting->getTemplateData(true));
+
+        $postingTemplate->enclosure = array();
+
+        // Add enclosures
+        if ($jobPostingModel->addEnclosure)
+        {
+            $this->addEnclosuresToTemplate($postingTemplate, $jobPostingModel->row());
+        }
 
         $this->Template->posting = $postingTemplate->parse();
 

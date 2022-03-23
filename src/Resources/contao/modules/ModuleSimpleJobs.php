@@ -5,7 +5,7 @@ namespace JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Modules;
 
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsOrganisationModel;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsPostingModel;
-use Symfony\Component\VarDumper\VarDumper;
+use JanoschOltmanns\ContaoSimpleJobsBundle\Entity\JobPosting;
 
 class ModuleSimpleJobs extends \Contao\Frontend {
 
@@ -38,56 +38,6 @@ class ModuleSimpleJobs extends \Contao\Frontend {
 		{
 			while ($objOrganisations->next())
 			{
-				// Skip Organisations without target page
-				if (!$objOrganisations->jumpTo)
-				{
-					continue;
-				}
-
-				// Skip Organisations outside the root nodes
-				if (!empty($arrRoot) && !\in_array($objOrganisations->jumpTo, $arrRoot))
-				{
-					continue;
-				}
-
-				// Get the URL of the jumpTo page
-				if (!isset($arrProcessed[$objOrganisations->jumpTo]))
-				{
-					$objParent = \PageModel::findWithDetails($objOrganisations->jumpTo);
-
-					// The target page does not exist
-					if ($objParent === null)
-					{
-						continue;
-					}
-
-					// The target page has not been published (see #5520)
-					if (!$objParent->published || ($objParent->start != '' && $objParent->start > $time) || ($objParent->stop != '' && $objParent->stop <= ($time + 60)))
-					{
-						continue;
-					}
-
-					if ($blnIsSitemap)
-					{
-						// The target page is protected (see #8416)
-						if ($objParent->protected)
-						{
-							continue;
-						}
-
-						// The target page is exempt from the sitemap (see #6418)
-						if ($objParent->sitemap == 'map_never')
-						{
-							continue;
-						}
-					}
-
-					// Generate the URL
-					$arrProcessed[$objOrganisations->jumpTo] = $objParent->getAbsoluteUrl(\Config::get('useAutoItem') ? '/%s' : '/items/%s');
-				}
-
-				$strUrl = $arrProcessed[$objOrganisations->jumpTo];
-
 				// Get the items
 				$objItems = SimpleJobsPostingModel::findPublishedByPid($objOrganisations->id);
 
@@ -95,7 +45,9 @@ class ModuleSimpleJobs extends \Contao\Frontend {
 				{
 					while ($objItems->next())
 					{
-						$arrPages[] = sprintf(preg_replace('/%(?!s)/', '%%', $strUrl), ($objItems->alias ?: $objItems->id));
+					    // $objItems
+                        $jobPosting = new JobPosting($objItems->current());
+                        $arrPages[] = $jobPosting->getDetailLink(true);
 					}
 				}
 			}
@@ -103,5 +55,16 @@ class ModuleSimpleJobs extends \Contao\Frontend {
 
 		return $arrPages;
 	}
+
+	public function jobsReplaceInsertTags($strTag) {
+        $arrSplit = explode('::', $strTag);
+        if (isset($arrSplit[0]) && $arrSplit[0] === 'job') {
+            $jobPostingModel = SimpleJobsPostingModel::findByIdOrAlias(\Input::get('items'));
+            if ($jobPostingModel !== null) {
+                return $jobPostingModel->{$arrSplit[1]};
+            }
+        }
+        return false;
+    }
 
 }

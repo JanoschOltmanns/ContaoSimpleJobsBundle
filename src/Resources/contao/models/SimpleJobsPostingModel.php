@@ -14,9 +14,9 @@ class SimpleJobsPostingModel extends Model {
 	protected static $strTable = 'tl_simple_jobs_posting';
 
 	/**
-	 * Find all published FAQs by their parent IDs
+	 * Find all published job postings by their parent IDs
 	 *
-	 * @param array $arrPids    An array of FAQ category IDs
+	 * @param array $arrPids    An array of organisation IDs
 	 * @param array $arrOptions An optional options array
 	 *
 	 * @return Model\Collection|SimpleJobsPostingModel[]|SimpleJobsPostingModel|null A collection of models or null if there are no job postings
@@ -43,6 +43,41 @@ class SimpleJobsPostingModel extends Model {
 
 		return static::findBy($arrColumns, null, $arrOptions);
 	}
+
+    /**
+     * Find all published job postings by their parent IDs
+     *
+     * @param array $arrPids    An array of organisation IDs
+     * @param array $categories An array of category IDs
+     * @param array $arrOptions An optional options array
+     *
+     * @return Model\Collection|SimpleJobsPostingModel[]|SimpleJobsPostingModel|null A collection of models or null if there are no job postings
+     */
+    public static function findPublishedByPidsAndCategories($arrPids, array $categories, array $arrOptions=array())
+    {
+        if (empty($arrPids) || !\is_array($arrPids))
+        {
+            return null;
+        }
+
+        $t = static::$strTable;
+
+        // Todo: hier passt was noch nicht
+        $arrColumns = array("$t.pid IN(" . implode(',', array_map('\intval', $arrPids)) . ")");
+        $arrColumns = array("$t.category IN(" . implode(',', array_map('\intval', $categories)) . ")");
+
+        if (!static::isPreviewMode($arrOptions))
+        {
+            $arrColumns[] = "$t.published='1'";
+        }
+
+        if (!isset($arrOptions['order']))
+        {
+            $arrOptions['order'] = "$t.datePosted DESC";
+        }
+
+        return static::findBy($arrColumns, null, $arrOptions);
+    }
 
 	/**
 	 * Find all published FAQs by their parent ID

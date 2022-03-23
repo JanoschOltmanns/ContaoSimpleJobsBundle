@@ -1,5 +1,6 @@
 <?php
 
+$GLOBALS['TL_LANG']['tl_simple_jobs_organisation']['categories'] = ['Kategorien', 'Kategorien verwalten'];
 $GLOBALS['TL_LANG']['tl_simple_jobs_organisation']['new'] = ['Neues Unternehmen', 'Ein neues Unternehmen erstellen'];
 $GLOBALS['TL_LANG']['tl_simple_jobs_organisation']['edit'] = ['Unternehmen bearbeiten', 'Das Unternehmen ID %s bearbeiten'];
 $GLOBALS['TL_LANG']['tl_simple_jobs_organisation']['locations'] = ['Standorte anzeigen', 'Die Standorte von Unternehmen ID %s anzeigen'];
