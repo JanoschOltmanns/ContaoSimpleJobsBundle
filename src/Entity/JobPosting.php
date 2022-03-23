@@ -5,7 +5,6 @@ namespace JanoschOltmanns\ContaoSimpleJobsBundle\Entity;
 use Contao\Config;
 use Contao\Controller;
 use Contao\Date;
-use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsPostingModel;
@@ -25,9 +24,7 @@ class JobPosting {
     }
 
     public function getDescription() {
-
         return Controller::replaceInsertTags($this->contaoModel->description);
-
     }
 
     public function getKeywords() {
@@ -36,29 +33,22 @@ class JobPosting {
             return null;
         }
         return $keywords;
-
     }
 
     public function getTitle() {
-
         return Controller::replaceInsertTags($this->contaoModel->title);
-
     }
 
     public function getEmploymentTypes() {
-
         return StringUtil::deserialize($this->contaoModel->employmentType);
-
     }
 
     public function getPostingDate($dateFormat='') {
-
         if ('' == $dateFormat) {
             $dateFormat = Config::get('dateFormat');
         }
 
         return Date::parse($dateFormat, $this->contaoModel->datePosted);
-
     }
 
     /**
@@ -107,36 +97,28 @@ class JobPosting {
     }
 
     public function getLocations() {
-
         $locations = $this->contaoModel->getRelated('locations');
 
         if (null !== $locations) {
-
             while ($locations->next()) {
                 $this->locations[] = new Location($locations->current());
             }
-
         }
 
         return $this->locations;
-
     }
 
     public function getOrganisation() {
-
         $organisation = $this->contaoModel->getRelated('pid');
 
         /** @var Organisation $organisation */
         $organisation = $organisation->current();
 
         if (null !== $organisation) {
-
             return new Organisation($organisation);
-
         }
 
         return null;
-
     }
 
     public function getReadableEmploymentTypes() {
@@ -175,7 +157,6 @@ class JobPosting {
     }
 
     public function getTemplateData(bool $withContaoModel = false) {
-
         $templateData = [];
         $templateData['title'] = $this->contaoModel->title;
         $templateData['description'] = $this->contaoModel->description;
@@ -190,7 +171,6 @@ class JobPosting {
         }
 
         return $templateData;
-
     }
 
 }

@@ -16,7 +16,6 @@ class StructuredJobPostingData {
     }
 
     public function getJson() {
-
         $jsonData = [
             '@context' => 'http://schema.org',
             '@type' => 'JobPosting',
@@ -80,7 +79,6 @@ class StructuredJobPostingData {
         }
 
         return json_encode($jsonData);
-
     }
 
 }
