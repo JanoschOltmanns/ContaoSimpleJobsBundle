@@ -4,6 +4,7 @@ namespace JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Modules;
 
 use Contao\BackendTemplate;
 use Contao\Module;
+use Contao\StringUtil;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsPostingModel;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Entity\JobPosting;
 
@@ -52,7 +53,13 @@ class ModuleSimpleJobsList extends Module {
 
         $postings = [];
 
-        $jobPostings = SimpleJobsPostingModel::findPublishedByPids($this->simplejobs_organisations);
+        if ($this->simplejobs_addCategoryFilter) {
+            $categories = StringUtil::deserialize($this->simplejobs_categories, true);
+            $jobPostings = SimpleJobsPostingModel::findPublishedByPidsAndCategories($this->simplejobs_organisations, $categories);
+        } else {
+            $jobPostings = SimpleJobsPostingModel::findPublishedByPids($this->simplejobs_organisations);
+        }
+
         if (null !== $jobPostings) {
             while ($jobPostings->next()) {
 
