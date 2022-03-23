@@ -90,7 +90,7 @@ class ModuleSimpleJobsReader extends Module {
         {
             $this->addEnclosuresToTemplate($postingTemplate, $jobPostingModel->row());
         }
-
+        
         $this->Template->posting = $postingTemplate->parse();
 
     }

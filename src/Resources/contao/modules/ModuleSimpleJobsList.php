@@ -55,8 +55,8 @@ class ModuleSimpleJobsList extends Module {
         $arrOptions = [];
 
         // Maximum number of items
-        if ($this->numberOfItems > 0) {
-            $arrOptions['limit'] = $this->numberOfItems;
+        if ($this->simplejobs_hardlimit > 0) {
+            $arrOptions['limit'] = $this->simplejobs_hardlimit;
         }
         if (\Input::get('location')) {
             $arrOptions['location'] =\Input::get('location');
@@ -69,7 +69,7 @@ class ModuleSimpleJobsList extends Module {
             $categories = StringUtil::deserialize($this->simplejobs_categories, true);
             $jobPostings = SimpleJobsPostingModel::findPublishedByPidsAndCategories($this->simplejobs_organisations, $categories);
         } else {
-            $jobPostings = SimpleJobsPostingModel::findPublishedByPids($this->simplejobs_organisations);
+            $jobPostings = SimpleJobsPostingModel::findPublishedByPids($this->simplejobs_organisations, $arrOptions);
         }
 
         if (null !== $jobPostings) {

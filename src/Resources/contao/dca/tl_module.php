@@ -2,7 +2,7 @@
 
 // Add palettes to tl_module
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'simplejobs_addCategoryFilter';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['simplejobslist']   = '{title_legend},name,headline,type;{config_legend},simplejobs_organisations,numberOfItems,simplejobs_addCategoryFilter;{template_legend:hide},simplejobs_postingtemplate,customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['simplejobslist']   = '{title_legend},name,headline,type;{config_legend},simplejobs_organisations,simplejobs_hardlimit,simplejobs_addCategoryFilter;{template_legend:hide},simplejobs_postingtemplate,customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['simplejobsreader'] = '{title_legend},name,headline,type;{config_legend},simplejobs_organisations,simplejobs_addstructureddata;{template_legend:hide},simplejobs_postingtemplate,customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['simplejobsfilter'] = '{title_legend},name,headline,type;{config_legend},simplejobs_organisations;{template_legend:hide},simplejobs_filtertemplate,customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['simplejobs_addCategoryFilter'] = 'simplejobs_categories';
@@ -49,6 +49,13 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['simplejobs_postingtemplate'] = [
     'options_callback'        => array('tl_module_simplejobs', 'getJobPostingTemplates'),
     'eval'                    => array('mandatory'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
     'sql'                     => "varchar(64) NOT NULL default ''"
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['simplejobs_hardlimit'] = [
+    'label'                   => &$GLOBALS['TL_LANG']['MSC']['numberOfItems'],
+    'exclude'                 => true,
+    'inputType'               => 'text',
+    'eval'                    => array('mandatory'=>true, 'rgxp'=>'natural', 'tl_class'=>'w50'),
+    'sql'                     => "smallint(5) unsigned NOT NULL default 0"
 ];
 
 /**
