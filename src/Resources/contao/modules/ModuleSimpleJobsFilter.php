@@ -3,9 +3,11 @@
 namespace JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Modules;
 
 use Contao\BackendTemplate;
+use Contao\Environment;
 use Contao\FormSelectMenu;
 use Contao\Input;
 use Contao\Module;
+use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsCategoryModel;
@@ -186,9 +188,20 @@ class ModuleSimpleJobsFilter extends Module {
             $templateFormFields['organisation'] = $this->generateSelectField('organisation', $organisationOptions);
         }
 
+        if (($objJumpTo = $this->objModel->getRelated('jumpTo')) instanceof PageModel) {
+            /** @var  PageModel $objJumpTo */
+            $this->Template->formAction = $objJumpTo->getFrontendUrl();
+        } else {
+            $this->Template->formAction = '';
+        }
+
         $this->Template->formId = 'form-filter--' . $this->id;
-        $this->Template->formAction = '';
+
         $this->Template->formFields = $templateFormFields;
+
+        [$pageUrl] = explode('?', Environment::get('request'), 2);
+
+        $this->Template->resetHref = $pageUrl;
     }
 
     private function generateSelectField(string $name, array $options) {

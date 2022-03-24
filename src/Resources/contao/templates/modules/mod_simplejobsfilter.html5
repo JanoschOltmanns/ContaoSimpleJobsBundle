@@ -23,4 +23,6 @@
         }
     </script>-->
 </form>
+<a href="<?= $this->resetHref ?>">Filter zurücksetzen</a>
+
 <?php $this->endblock(); ?>
