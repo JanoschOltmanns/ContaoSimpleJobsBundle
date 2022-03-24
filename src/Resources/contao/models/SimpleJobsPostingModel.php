@@ -21,10 +21,9 @@ class SimpleJobsPostingModel extends Model {
 	 *
 	 * @return Model\Collection|SimpleJobsPostingModel[]|SimpleJobsPostingModel|null A collection of models or null if there are no job postings
 	 */
-	public static function findPublishedByPids($arrPids, array $arrOptions=array())
+	public static function findPublishedByPids($arrPids, array $filters=[], array $arrOptions=[])
 	{
-		if (empty($arrPids) || !\is_array($arrPids))
-		{
+		if (empty($arrPids) || !\is_array($arrPids)) {
 			return null;
 		}
 
@@ -32,27 +31,38 @@ class SimpleJobsPostingModel extends Model {
 		$arrColumns = array("$t.pid IN(" . implode(',', array_map('\intval', $arrPids)) . ")");
 		$varValue   = null;
 
-		if (!static::isPreviewMode($arrOptions))
-		{
+		if (!static::isPreviewMode($arrOptions)) {
 			$arrColumns[] = "$t.published='1'";
 		}
 
-		if (!isset($arrOptions['order']))
-		{
+		if (!isset($arrOptions['order'])) {
 			$arrOptions['order'] = "$t.datePosted DESC";
 		}
 
-		if (isset($arrOptions['employmentType']))
-		{
-			$arrColumns['employmentType'] = "$t.employmentType LIKE ?";
-			$varValue[] = "%" . $arrOptions['employmentType'] . "%";
-		}
-
-		if (isset($arrOptions['location']))
-		{
-			$arrColumns['locations'] = "$t.locations LIKE ?";
-			$varValue[] = "%\"" . $arrOptions['location'] . "\"%";
-		}
+        if (isset($filters['location'])) {
+            $locationOrs = [];
+            foreach ($filters['location'] as $locationId) {
+                $locationOrs[] = "$t.locations LIKE ?";
+                $varValue[] = "%\"" . $locationId . "\"%";
+            }
+            $arrColumns[] = "(" . implode(" OR ", $locationOrs) . ")";
+        }
+        if (isset($filters['employmentType'])) {
+            $arrColumns[] = "$t.employmentType LIKE ?";
+            $varValue[] = "%\"" . $filters['employmentType'] . "\"%";
+        }
+        if (isset($filters['category'])) {
+            $arrColumns[] = "$t.category=?";
+            $varValue[] = $filters['category'];
+        }
+        if (isset($filters['keyword'])) {
+            $arrColumns[] = "$t.keywords LIKE ?";
+            $varValue[] = "%\"" . $filters['keyword'] . "\"%";
+        }
+        if (isset($filters['organisation'])) {
+            $arrColumns[] = "$t.pid=?";
+            $varValue[] = $filters['organisation'];
+        }
 
 		return static::findBy($arrColumns, $varValue, $arrOptions);
 	}
@@ -66,7 +76,7 @@ class SimpleJobsPostingModel extends Model {
      *
      * @return Model\Collection|SimpleJobsPostingModel[]|SimpleJobsPostingModel|null A collection of models or null if there are no job postings
      */
-    public static function findPublishedByPidsAndCategories($arrPids, array $categories, array $arrOptions=array())
+    public static function findPublishedByPidsAndCategories($arrPids, array $categories, array $filters=[], array $arrOptions=[])
     {
         if (empty($arrPids) || !\is_array($arrPids))
         {
@@ -77,16 +87,39 @@ class SimpleJobsPostingModel extends Model {
 
         // Todo: hier passt was noch nicht
         $arrColumns = array("$t.pid IN(" . implode(',', array_map('\intval', $arrPids)) . ")");
-        $arrColumns = array("$t.category IN(" . implode(',', array_map('\intval', $categories)) . ")");
+        $arrColumns[] = "$t.category IN(" . implode(',', array_map('\intval', $categories)) . ")";
 
-        if (!static::isPreviewMode($arrOptions))
-        {
+        if (!static::isPreviewMode($arrOptions)) {
             $arrColumns[] = "$t.published='1'";
         }
 
-        if (!isset($arrOptions['order']))
-        {
+        if (!isset($arrOptions['order'])) {
             $arrOptions['order'] = "$t.datePosted DESC";
+        }
+
+        if (isset($filters['location'])) {
+            $locationOrs = [];
+            foreach ($filters['location'] as $locationId) {
+                $locationOrs[] = "$t.locations LIKE ?";
+                $varValue[] = "%\"" . $locationId . "\"%";
+            }
+            $arrColumns[] = "(" . implode(" OR ", $locationOrs) . ")";
+        }
+        if (isset($filters['employmentType'])) {
+            $arrColumns[] = "$t.employmentType LIKE ?";
+            $varValue[] = "%\"" . $filters['employmentType'] . "\"%";
+        }
+        if (isset($filters['category'])) {
+            $arrColumns[] = "$t.category=?";
+            $varValue[] = $filters['category'];
+        }
+        if (isset($filters['keyword'])) {
+            $arrColumns[] = "$t.keywords LIKE ?";
+            $varValue[] = "%\"" . $filters['keyword'] . "\"%";
+        }
+        if (isset($filters['organisation'])) {
+            $arrColumns[] = "$t.pid=?";
+            $varValue[] = $filters['organisation'];
         }
 
         return static::findBy($arrColumns, null, $arrOptions);
@@ -136,25 +169,5 @@ class SimpleJobsPostingModel extends Model {
 
         return static::findOneBy($arrColumns, $varId, $arrOptions);
 	}
-	
-	/**
-	 * Find all published Locations by their parent ID
-	 *
-	 * @param int   $intPid     The parent ID
-	 * @param array $arrOptions An optional options array
-	 *
-	 * @return Model\Collection|SimpleJobsPostingModel[]|SimpleJobsPostingModel|null A collection of models or null if there are no FAQs
-	 */
-	public static function findLocationsByPids($intPid, array $arrOptions=array())
-	{
-		$t = static::$strTable;
-		$arrColumns = array("$t.pid=?");
-
-		if (!static::isPreviewMode($arrOptions))
-		{
-			$arrColumns[] = "$t.published='1'";
-		}
-
-		return static::findBy($arrColumns, $intPid, $arrOptions);
-	}
+    
 }

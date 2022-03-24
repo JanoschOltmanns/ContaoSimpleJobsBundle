@@ -7,3 +7,5 @@ $GLOBALS['TL_LANG']['MOD']['tl_simple_jobs_category'] = 'Kategorien';
 $GLOBALS['TL_LANG']['FMD']['simple_jobs'] = 'Stellenanzeigen';
 $GLOBALS['TL_LANG']['FMD']['simplejobslist'] = ['Stellenanzeigen Liste', 'Liste von Stellenanzeigen'];
 $GLOBALS['TL_LANG']['FMD']['simplejobsreader'] = ['Stellenanzeigen Detailansicht', 'Detailansicht für Stellenanzeigen'];
+$GLOBALS['TL_LANG']['FMD']['simplejobsfilter'] = ['Stellenanzeigen Filter', 'Filter für Stellenanzeigen'];
+

@@ -3,6 +3,7 @@
 namespace JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Modules;
 
 use Contao\BackendTemplate;
+use Contao\Input;
 use Contao\Module;
 use Contao\StringUtil;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsPostingModel;
@@ -50,26 +51,42 @@ class ModuleSimpleJobsList extends Module {
 
     protected function compile()
     {
-
         $postings = [];
+        $filters = [];
+
+        $hasFilter = false;
         $arrOptions = [];
 
         // Maximum number of items
         if ($this->simplejobs_hardlimit > 0) {
             $arrOptions['limit'] = $this->simplejobs_hardlimit;
         }
-        if (\Input::get('location')) {
-            $arrOptions['location'] =\Input::get('location');
+        if (Input::get('location')) {
+            $hasFilter = true;
+            $filters['location'] = explode(',', Input::get('location'));
         }
-        if (\Input::get('type')) {
-            $arrOptions['employmentType'] =\Input::get('type');
+        if (Input::get('employmentType')) {
+            $hasFilter = true;
+            $filters['employmentType'] = Input::get('employmentType');
+        }
+        if (Input::get('category')) {
+            $hasFilter = true;
+            $filters['category'] = Input::get('category');
+        }
+        if (Input::get('keyword')) {
+            $hasFilter = true;
+            $filters['keyword'] = Input::get('keyword');
+        }
+        if (Input::get('organisation')) {
+            $hasFilter = true;
+            $filters['organisation'] = Input::get('organisation');
         }
 
         if ($this->simplejobs_addCategoryFilter) {
             $categories = StringUtil::deserialize($this->simplejobs_categories, true);
-            $jobPostings = SimpleJobsPostingModel::findPublishedByPidsAndCategories($this->simplejobs_organisations, $categories);
+            $jobPostings = SimpleJobsPostingModel::findPublishedByPidsAndCategories($this->simplejobs_organisations, $categories, $filters, $arrOptions);
         } else {
-            $jobPostings = SimpleJobsPostingModel::findPublishedByPids($this->simplejobs_organisations, $arrOptions);
+            $jobPostings = SimpleJobsPostingModel::findPublishedByPids($this->simplejobs_organisations, $filters, $arrOptions);
         }
 
         if (null !== $jobPostings) {
@@ -85,6 +102,7 @@ class ModuleSimpleJobsList extends Module {
             }
         }
 
+        $this->Template->hasFilter = $hasFilter;
         $this->Template->postings = $postings;
 
     }

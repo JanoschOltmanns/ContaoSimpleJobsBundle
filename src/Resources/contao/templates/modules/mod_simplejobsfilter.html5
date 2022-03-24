@@ -1,18 +1,26 @@
 <?php $this->extend('block_unsearchable'); ?>
 
 <?php $this->block('content'); ?>
-<form post="GET">
-  <select name="location" onchange='this.form.submit()'>
-    <option value="">alle Standorte</option>
-    <?php foreach ( $this->locations as $key => $value): ?>
-      <option value="<?= $key ?>" <?= ($_GET['location'] == $key) ? 'selected' : '' ?> ><?= $value ?></option>
+
+<form action="<?= $this->formAction ?>" method="get" id="<?= $this->formId ?>">
+    <?php foreach ($this->formFields as $formField): ?>
+        <?= $formField ?>
     <?php endforeach; ?>
-  </select>
-  <select name="type" onchange='this.form.submit()'>
-    <option value="">alle Anstellungsarten</option>
-    <?php foreach ( $this->employmentTypes as $key => $value): ?>
-      <option value="<?= $key ?>"  <?= ($_GET['type'] == $key) ? 'selected' : '' ?> ><?= $value ?></option>
-    <?php endforeach; ?>
-  </select>
+    <div class="widget widget-submit">
+        <button type="submit" class="submit"><?= $GLOBALS['TL_LANG']['MSC']['apply'] ?></button>
+    </div>
+
+    <!-- comment in for submit on select -->
+    <!--<script>
+        var form = document.getElementById('<?= $this->formId ?>');
+        var selectFields = form.getElementsByTagName('select');
+        if (selectFields.length) {
+            selectFields.forEach(function(selectField) {
+                selectField.addEventListener('change', function() {
+                    form.submit();
+                });
+            });
+        }
+    </script>-->
 </form>
 <?php $this->endblock(); ?>
