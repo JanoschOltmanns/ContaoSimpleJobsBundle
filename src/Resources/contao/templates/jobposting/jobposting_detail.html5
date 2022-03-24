@@ -1,10 +1,23 @@
 
 <div class="job-item">
     <h1 class="h2"><?= $this->title ?></h1>
+    <small><?= implode(', ', $this->employmentType) ?></small>
+    
     <?php if ($this->keywords): ?>
         <ul class="job-item_keywords">
             <li><?= implode('</li><li>', $this->keywords) ?></li>
         </ul>
     <?php endif; ?>
+
     <?= $this->description ?>
+
+    <?php if ($this->enclosure): ?>
+        <ul class="enclosure">
+            <?php foreach ($this->enclosure as $enclosure): ?>
+                <li class="download-element ext-<?= $enclosure['extension'] ?>">
+                    <a href="<?= $enclosure['href'] ?>" title="<?= $enclosure['title'] ?>"><?= $enclosure['link'] ?> <span class="size">(<?= $enclosure['filesize'] ?>)</span></a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
 </div>

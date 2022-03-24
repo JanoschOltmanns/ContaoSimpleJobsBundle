@@ -10,8 +10,8 @@
   ],
   "require": {
     "ext-json": "*",
-    "php": ">=5.4.0",
-    "contao/core-bundle": ">=4.3"
+    "php": "^7.2",
+    "contao/core-bundle": "^4.9"
   },
   "conflict": {
     "contao/core": "*",
@@ -26,6 +26,7 @@
     ],
     "exclude-from-classmap": [
       "src/Resources/contao/config/",
+      "src/Resources/contao/dca/",
       "src/Resources/contao/languages/",
       "src/Resources/contao/templates/"
     ]

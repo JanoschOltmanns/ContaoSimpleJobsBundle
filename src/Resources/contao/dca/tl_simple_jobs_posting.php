@@ -1,5 +1,6 @@
 <?php
 
+Contao\System::loadLanguageFile('tl_content');
 
 $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
 (
@@ -14,7 +15,7 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
 		'onload_callback' => array
 		(
 			//array('tl_news', 'checkPermission'),
-			array('tl_simple_jobs_posting', 'adjustSitemap')
+			//array('tl_simple_jobs_posting', 'adjustSitemap')
 		),
 		'oncut_callback' => array
 		(
@@ -27,7 +28,7 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
 		'onsubmit_callback' => array
 		(
 			//array('tl_news', 'adjustTime'),
-			//array('tl_news', 'scheduleUpdate')
+            array('tl_simple_jobs_posting', 'adjustSitemap')
 		),
         'sql' => array
 		(
@@ -121,7 +122,7 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['toggle'],
 				'icon'                => 'visible.svg',
 				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-				//'button_callback'     => array('tl_news', 'toggleIcon'),
+				'button_callback'     => array('tl_simple_jobs_posting', 'toggleIcon'),
 				'showInHeader'        => true
 			),
 			'show' => array
@@ -136,8 +137,17 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{posting_legend},title,alias,datePosted,employmentType,locations,keywords,description;{published_legend},published,start,stop'
-	),
+	    '__selector__' => array('addSalary', 'addEnclosure', 'addImage', 'overwriteMeta'),
+		'default' => '{posting_legend},title,category,alias,datePosted,employmentType,locations,keywords,teaser,description;{salary_legend},addSalary;{image_legend},addImage;{enclosures_legend},addEnclosure;{published_legend},validThrough,published,start,stop'
+    ),
+
+    // Subpalettes
+    'subpalettes' => array(
+        'addEnclosure' => 'enclosure',
+        'addSalary' => 'salaryValue,salaryValueMax,salaryUnit',
+        'addImage' => 'singleSRC,overwriteMeta',
+        'overwriteMeta' => 'alt,imageTitle,imageUrl,caption'
+    ),
 
     // Fields
     'fields' => [
@@ -164,6 +174,17 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
 			'inputType'               => 'text',
 			'eval'                    => array('mandatory'=>true, 'maxlength'=>255, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
+        ),
+        'category' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['category'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'filter'                  => true,
+            'inputType'               => 'select',
+            'foreignKey'              => 'tl_simple_jobs_category.title',
+            'eval'                    => array('includeBlankOption'=>true, 'tl_class'=>'w50'),
+            'sql'                     => "int(10) unsigned NOT NULL default 0",
+            'relation'                => array('type'=>'hasOne', 'load'=>'lazy')
         ),
         'alias' => array(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['alias'],
@@ -218,6 +239,14 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
 			'eval'                    => array('allowHtml'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "blob NULL"
         ),
+        'teaser' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['teaser'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'textarea',
+            'eval'                    => array('rte'=>'tinyMCE', 'tl_class'=>'clr'),
+            'sql'                     => "text NULL"
+        ),
         'description' => array(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['description'],
 			'exclude'                 => true,
@@ -227,13 +256,132 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
 			'explanation'             => 'insertTags',
 			'sql'                     => "mediumtext NULL"
         ),
+        'addSalary' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['addSalary'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('submitOnChange'=>true),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'salaryValue' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['salaryValue'],
+            'exclude'                 => true,
+            'inputType'               => 'inputUnit',
+            'options'                 => array('EUR', 'USD'),
+            'eval'                    => array('mandatory'=>true, 'includeBlankOption'=>true, 'rgxp'=>'digit', 'tl_class'=>'w50'),
+            'sql'                     => "varchar(255) NOT NULL default ''"
+        ),
+        'salaryValueMax' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['salaryValueMax'],
+            'exclude'                 => true,
+            'inputType'               => 'text',
+            'eval'                    => array('rgxp'=>'digit', 'tl_class'=>'w50'),
+            'sql'                     => "varchar(10) NOT NULL default ''"
+        ),
+        'salaryUnit' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['salaryUnit'],
+            'exclude'                 => true,
+            'inputType'               => 'select',
+            'options'                 => array('HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR'),
+            'reference'               => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['salaryUnitReference'],
+            'eval'                    => array('mandatory'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
+            'sql'                     => "varchar(5) NOT NULL default ''"
+        ),
+        'addImage' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['addImage'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('submitOnChange'=>true),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'overwriteMeta' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_content']['overwriteMeta'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50 clr'),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'singleSRC' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_content']['singleSRC'],
+            'exclude'                 => true,
+            'inputType'               => 'fileTree',
+            'eval'                    => array('fieldType'=>'radio', 'filesOnly'=>true, 'extensions'=>Contao\Config::get('validImageTypes'), 'mandatory'=>true),
+            'sql'                     => "binary(16) NULL"
+        ),
+        'alt' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_content']['alt'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50'),
+            'sql'                     => "varchar(255) NOT NULL default ''"
+        ),
+        'imageTitle' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_content']['imageTitle'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50'),
+            'sql'                     => "varchar(255) NOT NULL default ''"
+        ),
+        'imageUrl' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_content']['imageUrl'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'eval'                    => array('rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>255, 'dcaPicker'=>true, 'addWizardClass'=>false, 'tl_class'=>'w50'),
+            'sql'                     => "varchar(255) NOT NULL default ''"
+        ),
+        'caption' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_content']['caption'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'eval'                    => array('maxlength'=>255, 'allowHtml'=>true, 'tl_class'=>'w50'),
+            'sql'                     => "varchar(255) NOT NULL default ''"
+        ),
+        'addEnclosure' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['addEnclosure'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('submitOnChange'=>true),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'enclosure' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['enclosure'],
+            'exclude'                 => true,
+            'inputType'               => 'fileTree',
+            'eval'                    => array('multiple'=>true, 'fieldType'=>'checkbox', 'filesOnly'=>true, 'isDownloads'=>true, 'extensions'=>\Contao\Config::get('allowedDownload'), 'mandatory'=>true, 'orderField'=>'orderEnclosure'),
+            'sql'                     => "blob NULL"
+        ),
+        'orderEnclosure' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['MSC']['sortOrder'],
+            'sql'                     => "blob NULL"
+        ),
+        'validThrough' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['validThrough'],
+            'exclude'                 => true,
+            'inputType'               => 'text',
+            'eval'                    => array('rgxp'=>'date', 'doNotCopy'=>true, 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
+            'sql'                     => "int(10) unsigned NULL"
+        ),
         'published' => array(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['published'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'checkbox',
-			'eval'                    => array('doNotCopy'=>true),
+			'eval'                    => array('doNotCopy'=>true, 'tl_class' => 'clr'),
 			'sql'                     => "char(1) NOT NULL default ''"
         ),
         'start' => array(
@@ -256,57 +404,58 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
 
 class tl_simple_jobs_posting extends \Contao\Backend {
 
+    /**
+     * Import the back end user object
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->import('Contao\BackendUser', 'User');
+    }
+
+    /**
+     * List a job posting
+     *
+     * @param array $arrRow
+     * @return string
+     */
     public function listJob($arrRow) {
 		return '<div><span class="tl_gray">' . \Date::parse(\Config::get('dateFormat'), $arrRow['datePosted']) . ':</span> ' . \StringUtil::restoreBasicEntities($arrRow['title']) . '</div>';
     }
 
-	public function generateAlias($varValue, DataContainer $dc)
+    /**
+     * @param string $varValue
+     * @param \Contao\DataContainer $dc
+     * @return string
+     */
+	public function generateAlias(string $varValue, \Contao\DataContainer $dc)
 	{
-		$autoAlias = false;
+        $aliasExists = function (string $alias) use ($dc): bool
+        {
+            return $this->Database->prepare("SELECT id FROM tl_simple_jobs_posting WHERE alias=? AND id!=?")->execute($alias, $dc->id)->numRows > 0;
+        };
 
-		// Generate alias if there is none
-		if ($varValue == '')
-		{
-			$autoAlias = true;
-			$slugOptions = array();
+        // Generate alias if there is none
+        if (!$varValue)
+        {
+            $varValue = \Contao\System::getContainer()->get('contao.slug')->generate(
+                $dc->activeRecord->title,
+                \JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsOrganisationModel::findByPk($dc->activeRecord->pid)->jumpTo,
+                $aliasExists
+            );
+        }
+        elseif ($aliasExists($varValue))
+        {
+            throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
+        }
 
-			// Read the slug options from the associated page
-			if (($objFaqCategory = \JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsOrganisationModel::findByPk($dc->activeRecord->pid)) !== null && ($objPage = PageModel::findWithDetails($objFaqCategory->jumpTo)) !== null)
-			{
-				$slugOptions = $objPage->getSlugOptions();
-			}
-
-			$varValue = System::getContainer()->get('contao.slug.generator')->generate(StringUtil::prepareSlug($dc->activeRecord->title), $slugOptions);
-
-			// Prefix numeric aliases (see #1598)
-			if (is_numeric($varValue))
-			{
-				$varValue = 'id-' . $varValue;
-			}
-		}
-
-		$objAlias = $this->Database->prepare("SELECT id FROM tl_simple_jobs_posting WHERE alias=? AND id!=?")
-								   ->execute($varValue, $dc->id);
-
-		// Check whether the FAQ alias exists
-		if ($objAlias->numRows)
-		{
-			if (!$autoAlias)
-			{
-				throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
-			}
-
-			$varValue .= '-' . $dc->id;
-		}
-
-		return $varValue;
+        return $varValue;
 	}
 
     /**
-	 * Set the timestamp to 00:00:00 (see #26)
+	 * Set the timestamp to 00:00:00
 	 *
 	 * @param integer $value
-	 *
 	 * @return integer
 	 */
 	public function loadDate($value)
@@ -314,13 +463,144 @@ class tl_simple_jobs_posting extends \Contao\Backend {
 		return strtotime(date('Y-m-d', $value) . ' 00:00:00');
 	}
 
+    /**
+     *
+     */
     public function adjustSitemap()
 	{
-
 		$this->import('Automator');
 		$this->Automator->generateSitemap();
-
 	}
 
+    /**
+     * Return the "toggle visibility" button
+     *
+     * @param array  $row
+     * @param string $href
+     * @param string $label
+     * @param string $title
+     * @param string $icon
+     * @param string $attributes
+     *
+     * @return string
+     */
+    public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
+    {
+        if (\Contao\Input::get('tid'))
+        {
+            $this->toggleVisibility(\Contao\Input::get('tid'), (\Contao\Input::get('state') == 1), (@func_get_arg(12) ?: null));
+            $this->redirect($this->getReferer());
+        }
 
+        // Check permissions AFTER checking the tid, so hacking attempts are logged
+        if (!$this->User->hasAccess('tl_simple_jobs_posting::published', 'alexf'))
+        {
+            return '';
+        }
+
+        $href .= '&amp;tid=' . $row['id'] . '&amp;state=' . ($row['published'] ? '' : 1);
+
+        if (!$row['published'])
+        {
+            $icon = 'invisible.svg';
+        }
+
+        return '<a href="' . $this->addToUrl($href) . '" title="' . \Contao\StringUtil::specialchars($title) . '"' . $attributes . '>' . \Contao\Image::getHtml($icon, $label, 'data-state="' . ($row['published'] ? 1 : 0) . '"') . '</a> ';
+    }
+
+    /**
+     * Disable/enable a job posting
+     *
+     * @param integer              $intId
+     * @param boolean              $blnVisible
+     * @param \Contao\DataContainer $dc
+     */
+    public function toggleVisibility($intId, $blnVisible, \Contao\DataContainer $dc=null)
+    {
+        // Set the ID and action
+        \Contao\Input::setGet('id', $intId);
+        \Contao\Input::setGet('act', 'toggle');
+
+        if ($dc)
+        {
+            $dc->id = $intId; // see #8043
+        }
+
+        // Check the field access
+        if (!$this->User->hasAccess('tl_simple_jobs_posting::published', 'alexf'))
+        {
+            throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to publish/unpublish job posting ID ' . $intId . '.');
+        }
+
+        $objRow = $this->Database->prepare("SELECT * FROM tl_simple_jobs_posting WHERE id=?")
+            ->limit(1)
+            ->execute($intId);
+
+        if ($objRow->numRows < 1)
+        {
+            throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid job posting ID ' . $intId . '.');
+        }
+
+        // Set the current record
+        if ($dc)
+        {
+            $dc->activeRecord = $objRow;
+        }
+
+        $objVersions = new \Contao\Versions('tl_simple_jobs_posting', $intId);
+        $objVersions->initialize();
+
+        // Trigger the save_callback
+        if (is_array($GLOBALS['TL_DCA']['tl_simple_jobs_posting']['fields']['published']['save_callback']))
+        {
+            foreach ($GLOBALS['TL_DCA']['tl_simple_jobs_posting']['fields']['published']['save_callback'] as $callback)
+            {
+                if (is_array($callback))
+                {
+                    $this->import($callback[0]);
+                    $blnVisible = $this->{$callback[0]}->{$callback[1]}($blnVisible, $dc);
+                }
+                elseif (is_callable($callback))
+                {
+                    $blnVisible = $callback($blnVisible, $dc);
+                }
+            }
+        }
+
+        $time = time();
+
+        // Update the database
+        $this->Database->prepare("UPDATE tl_simple_jobs_posting SET tstamp=$time, published='" . ($blnVisible ? '1' : '') . "' WHERE id=?")
+            ->execute($intId);
+
+        if ($dc)
+        {
+            $dc->activeRecord->tstamp = $time;
+            $dc->activeRecord->published = ($blnVisible ? '1' : '');
+        }
+
+        // Trigger the onsubmit_callback
+        if (is_array($GLOBALS['TL_DCA']['tl_simple_jobs_posting']['config']['onsubmit_callback']))
+        {
+            foreach ($GLOBALS['TL_DCA']['tl_simple_jobs_posting']['config']['onsubmit_callback'] as $callback)
+            {
+                if (is_array($callback))
+                {
+                    $this->import($callback[0]);
+                    $this->{$callback[0]}->{$callback[1]}($dc);
+                }
+                elseif (is_callable($callback))
+                {
+                    $callback($dc);
+                }
+            }
+        }
+
+        $objVersions->create();
+
+        if ($dc)
+        {
+            $dc->invalidateCacheTags();
+        }
+    }
 }

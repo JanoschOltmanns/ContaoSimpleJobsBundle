@@ -2,8 +2,16 @@
 
 <?php $this->block('content'); ?>
 
-  <?php foreach($this->postings as $posting): ?>
-    <?= $posting ?>
-  <?php endforeach; ?>
+    <?php if ($this->postings && count($this->postings) > 0): ?>
+        <?php foreach($this->postings as $posting): ?>
+            <?= $posting ?>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <?php if ($this->hasFilter): ?>
+            <p>Leider haben wir keine passenden Stellenanzeigen für Sie gefunden.</p>
+        <?php  else: ?>
+            <p>Leider haben wir aktuell keine offenen Stellenanzeigen.</p>
+        <?php endif; ?>
+    <?php endif; ?>
 
 <?php $this->endblock(); ?>

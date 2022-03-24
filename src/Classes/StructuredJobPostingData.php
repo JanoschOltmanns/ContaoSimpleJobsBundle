@@ -16,7 +16,6 @@ class StructuredJobPostingData {
     }
 
     public function getJson() {
-
         $jsonData = [
             '@context' => 'http://schema.org',
             '@type' => 'JobPosting',
@@ -32,6 +31,35 @@ class StructuredJobPostingData {
             'jobLocation' => [],
             'title' => $this->jobPosting->getTitle()
         ];
+
+        if (null !== $validThrough = $this->jobPosting->getValidThrough('Y-m-d')) {
+            $jsonData['validThrough'] = $validThrough;
+        }
+
+        if ($this->jobPosting->hasSalaryInformations()) {
+            if ($this->jobPosting->hasSalaryRange()) {
+                $jsonData['baseSalary'] = [
+                    '@type' => 'MonetaryAmount',
+                    'currency' => $this->jobPosting->getSalaryCurrency(),
+                    'value' => [
+                        '@type' => 'QuantitativeValue',
+                        'minValue' => $this->jobPosting->getSalaryValueMin(),
+                        'maxValue' => $this->jobPosting->getSalaryValueMax(),
+                        'unitText' => $this->jobPosting->getSalaryUnitText()
+                    ]
+                ];
+            } else {
+                $jsonData['baseSalary'] = [
+                    '@type' => 'MonetaryAmount',
+                    'currency' => $this->jobPosting->getSalaryCurrency(),
+                    'value' => [
+                        '@type' => 'QuantitativeValue',
+                        'value' => $this->jobPosting->getSalaryValue(),
+                        'unitText' => $this->jobPosting->getSalaryUnitText()
+                    ]
+                ];
+            }
+        }
 
         $locations = $this->jobPosting->getLocations();
 
@@ -51,7 +79,6 @@ class StructuredJobPostingData {
         }
 
         return json_encode($jsonData);
-
     }
 
 }

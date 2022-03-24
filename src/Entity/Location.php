@@ -7,23 +7,23 @@ use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsLocationModel
 
 class Location {
 
-    /** @var SimpleJobsOrganisationModel|null  */
-    private $contaoModel = null;
+    /** @var SimpleJobsLocationModel|null  */
+    private $contaoModel;
 
     /** @var string  */
-    private $street = '';
+    private $street;
 
     /** @var string  */
-    private $zipcode = '';
+    private $zipcode;
 
     /** @var string  */
-    private $city = '';
+    private $city;
 
     /** @var string  */
-    private $region = '';
+    private $region;
 
     /** @var string  */
-    private $country = '';
+    private $country;
 
 
     public function __construct(SimpleJobsLocationModel $contaoLocationnModel)
@@ -39,7 +39,6 @@ class Location {
         $this->region = Controller::replaceInsertTags($this->contaoModel->addressRegion);
 
         $this->country = strtoupper($this->contaoModel->addressCountry);
-
     }
 
     /**
