@@ -15,11 +15,11 @@
         var form = document.getElementById('<?= $this->formId ?>');
         var selectFields = form.getElementsByTagName('select');
         if (selectFields.length) {
-            selectFields.forEach(function(selectField) {
-                selectField.addEventListener('change', function() {
+            for (i = 0; i < selectFields.length; i++) {
+                selectFields[i].addEventListener('change', function() {
                     form.submit();
                 });
-            });
+            }
         }
     </script>-->
 </form>
