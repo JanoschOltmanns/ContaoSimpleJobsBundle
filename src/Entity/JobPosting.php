@@ -158,9 +158,11 @@ class JobPosting {
 
     public function getTemplateData(bool $withContaoModel = false) {
         $templateData = [];
+        $templateData['id'] = $this->contaoModel->id;
         $templateData['title'] = $this->contaoModel->title;
         $templateData['description'] = $this->contaoModel->description;
         $templateData['teaser'] = $this->contaoModel->teaser;
+        $templateData['singleSRC'] = $this->contaoModel->singleSRC;
         $templateData['keywords'] = $this->getKeywords();
         $templateData['locations'] = $this->getLocations();
         $templateData['href'] = $this->getDetailLink();
