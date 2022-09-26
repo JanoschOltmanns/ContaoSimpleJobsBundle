@@ -29,7 +29,7 @@ class ModuleSimpleJobsList extends Module {
 
             $objTemplate = new BackendTemplate('be_wildcard');
 
-            $objTemplate->wildcard = '##' . $GLOBALS['TL_LANG']['MOD']['simplejobslist'][0] . '##';
+            $objTemplate->wildcard = '##' . $GLOBALS['TL_LANG']['FMD']['simplejobslist'][0] . '##';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
