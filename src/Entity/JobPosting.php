@@ -7,6 +7,7 @@ use Contao\Controller;
 use Contao\Date;
 use Contao\StringUtil;
 use Contao\System;
+use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsOrganisationModel;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsPostingModel;
 
 class JobPosting {
@@ -17,10 +18,18 @@ class JobPosting {
     /** @var array  */
     private $locations = [];
 
+    private array $data;
+
     public function __construct(SimpleJobsPostingModel $contaoJobPostingModel)
     {
         System::loadLanguageFile('tl_simple_jobs_posting');
         $this->contaoModel = $contaoJobPostingModel;
+        $this->data = $contaoJobPostingModel->row();
+    }
+
+    public static function fromJobPostingModel(SimpleJobsPostingModel $contaoJobPostingModel): JobPosting
+    {
+        return new self($contaoJobPostingModel);
     }
 
     public function getDescription() {
@@ -43,8 +52,8 @@ class JobPosting {
         return StringUtil::deserialize($this->contaoModel->employmentType);
     }
 
-    public function getPostingDate($dateFormat='') {
-        if ('' == $dateFormat) {
+    public function getPostingDate($dateFormat = '') {
+        if ('' === $dateFormat) {
             $dateFormat = Config::get('dateFormat');
         }
 
@@ -55,8 +64,8 @@ class JobPosting {
      * @param string $dateFormat
      * @return string|null
      */
-    public function getValidThrough($dateFormat='') {
-        if ('' == $dateFormat) {
+    public function getValidThrough($dateFormat = '') {
+        if ('' === $dateFormat) {
             $dateFormat = Config::get('dateFormat');
         }
         if ($this->contaoModel->validThrough) {
@@ -108,20 +117,20 @@ class JobPosting {
         return $this->locations;
     }
 
-    public function getOrganisation() {
+    public function getOrganisation(): ?Organisation
+    {
         $organisation = $this->contaoModel->getRelated('pid');
-
-        /** @var Organisation $organisation */
-        $organisation = $organisation->current();
-
         if (null !== $organisation) {
-            return new Organisation($organisation);
-        }
+            $organisation = $organisation->current();
 
+            /** @var SimpleJobsOrganisationModel $organisation */
+            return Organisation::fromOrganisationModel($organisation);
+        }
         return null;
     }
 
-    public function getReadableEmploymentTypes() {
+    public function getReadableEmploymentTypes(): array
+    {
         $readableEmploymentTypes = [];
         foreach ($this->getEmploymentTypes() as $employmentType) {
             $readableEmploymentTypes[] = $GLOBALS['TL_LANG']['tl_simple_jobs_posting']['employmentTypeReference'][$employmentType];
@@ -129,7 +138,8 @@ class JobPosting {
         return $readableEmploymentTypes;
     }
 
-    public function getDetailLink($absolute=false) {
+    public function getDetailLink(bool $absolute = false): string
+    {
         $link = '';
         $page = null;
 
@@ -157,7 +167,7 @@ class JobPosting {
     }
 
     public function getTemplateData(bool $withContaoModel = false) {
-        $templateData = [];
+        $templateData = $this->data;
         $templateData['id'] = $this->contaoModel->id;
         $templateData['title'] = $this->contaoModel->title;
         $templateData['description'] = $this->contaoModel->description;
@@ -171,17 +181,13 @@ class JobPosting {
         $templateData['employmentTypes'] = $templateData['employmentType']; // legacy
         $organisation = $this->getOrganisation();
         if (null !== $organisation) {
-            $templateData['organisation'] = [
-                'name' => $organisation->getName(),
-                'website' => $organisation->getWebsite(),
-                'logo' => $organisation->getLogo(),
-                'teaser' => $organisation->getTeaser()
-            ];
+            $templateData['organisation'] = $organisation->getData();
         }
 
         if ($withContaoModel) {
             $templateData['contaoModel'] = $this->contaoModel;
         }
+
 
         return $templateData;
     }

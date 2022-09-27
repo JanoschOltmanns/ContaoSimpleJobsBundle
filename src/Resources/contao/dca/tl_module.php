@@ -2,14 +2,18 @@
 
 // Add palettes to tl_module
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'simplejobs_addCategoryFilter';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'simplejobs_showTeaserImage';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'simplejobs_showOrganisationImage';
 
-$GLOBALS['TL_DCA']['tl_module']['palettes']['simplejobslist'] = '{title_legend},name,headline,type;{config_legend},simplejobs_organisations,simplejobs_hardlimit,simplejobs_addCategoryFilter;{template_legend:hide},simplejobs_postingtemplate,customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['simplejobslist'] = '{title_legend},name,headline,type;{config_legend},simplejobs_organisations,simplejobs_hardlimit,simplejobs_addCategoryFilter;{image_legend:hide},simplejobs_showTeaserImage,simplejobs_showOrganisationImage;{template_legend:hide},simplejobs_postingtemplate,customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['simplejobsreader'] = '{title_legend},name,headline,type;{config_legend},simplejobs_organisations,simplejobs_addstructureddata;{template_legend:hide},simplejobs_postingtemplate,customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['simplejobsfilter'] = '{title_legend},name,headline,type;{config_legend},simplejobs_organisations,simplejobs_filters,jumpTo;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['simplejobs_addCategoryFilter'] = 'simplejobs_categories';
+$GLOBALS['TL_DCA']['tl_module']['subpalettes']['simplejobs_showTeaserImage'] = 'simplejobs_teaserImageSize';
+$GLOBALS['TL_DCA']['tl_module']['subpalettes']['simplejobs_showOrganisationImage'] = 'simplejobs_organisationImageSize';
 
 // Add fields to tl_module
 $GLOBALS['TL_DCA']['tl_module']['fields']['simplejobs_organisations'] = [
@@ -67,6 +71,34 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['simplejobs_respectFilters'] = [
     'exclude'                 => true,
     'inputType'               => 'checkbox',
     'sql'                     => "char(1) NOT NULL default ''"
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['simplejobs_showTeaserImage'] = [
+    'exclude'                 => true,
+    'inputType'               => 'checkbox',
+    'eval'                    => array('submitOnChange'=>true),
+    'sql'                     => "char(1) NOT NULL default ''"
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['simplejobs_teaserImageSize'] = [
+    'label'                   => &$GLOBALS['TL_LANG']['MSC']['imgSize'],
+    'exclude'                 => true,
+    'inputType'               => 'imageSize',
+    'reference'               => &$GLOBALS['TL_LANG']['MSC'],
+    'eval'                    => array('rgxp'=>'natural', 'includeBlankOption'=>true, 'nospace'=>true, 'helpwizard'=>true, 'tl_class'=>'w50'),
+    'sql'                     => "varchar(128) COLLATE ascii_bin NOT NULL default ''"
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['simplejobs_showOrganisationImage'] = [
+    'exclude'                 => true,
+    'inputType'               => 'checkbox',
+    'eval'                    => array('submitOnChange'=>true),
+    'sql'                     => "char(1) NOT NULL default ''"
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['simplejobs_organisationImageSize'] = [
+    'label'                   => &$GLOBALS['TL_LANG']['MSC']['imgSize'],
+    'exclude'                 => true,
+    'inputType'               => 'imageSize',
+    'reference'               => &$GLOBALS['TL_LANG']['MSC'],
+    'eval'                    => array('rgxp'=>'natural', 'includeBlankOption'=>true, 'nospace'=>true, 'helpwizard'=>true, 'tl_class'=>'w50'),
+    'sql'                     => "varchar(128) COLLATE ascii_bin NOT NULL default ''"
 ];
 
 /**

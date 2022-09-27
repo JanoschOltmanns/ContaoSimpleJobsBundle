@@ -1,15 +1,21 @@
 
 <div class="job-item">
-<?php if ($this->href): ?><a href="<?= $this->href ?>"><?php endif; ?>
 
-<h3><?= $this->title ?></h3>
-<small><?= implode(', ', $this->employmentType) ?></small>
+    <?php dump($this->arrData); ?>
 
-<?php if ($this->keywords): ?>
-    <ul class="job-item_keywords">
-        <li><?= implode('</li><li>', $this->keywords) ?></li>
-    </ul>
-<?php endif; ?>
+    <h3><?= $this->title ?></h3>
+    <small><?= implode(', ', $this->employmentType) ?></small>
 
-<?php if ($this->href): ?><button type="button">Weitere Informationen</button></a><?php endif; ?>
+    <?php if ($this->keywords): ?>
+        <ul class="job-item_keywords">
+            <li><?= implode('</li><li>', $this->keywords) ?></li>
+        </ul>
+    <?php endif; ?>
+
+    <?= $this->teaser ?>
+
+    <?php if ($this->href): ?>
+        <p class="more"><a href="<?= $this->href ?>" title="<?= $this->title ?>">Weitere Informationen</a></p>
+    <?php endif; ?>
+
 </div>
