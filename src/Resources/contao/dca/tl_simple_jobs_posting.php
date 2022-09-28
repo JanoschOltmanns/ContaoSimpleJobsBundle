@@ -1,5 +1,7 @@
 <?php
 
+use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsLocationModel;
+
 Contao\System::loadLanguageFile('tl_content');
 
 $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
@@ -227,7 +229,8 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
-			'foreignKey'              => 'tl_simple_jobs_location.addressLocality',
+            'foreignKey'              => 'tl_simple_jobs_location.addressLocality',
+            'options_callback'        => array('tl_simple_jobs_posting', 'getLocations'),
 			'eval'                    => array('mandatory'=>true, 'multiple'=>true, 'tl_class'=>'clr w50'),
 			'sql'                     => "blob NULL",
 			'relation'                => array('type'=>'hasMany', 'load'=>'eager')
@@ -451,6 +454,23 @@ class tl_simple_jobs_posting extends \Contao\Backend {
 
         return $varValue;
 	}
+
+    /**
+     * @return array
+     */
+    public function getLocations(DataContainer $dc)
+    {
+        $locations = [];
+        if ($dc->activeRecord->pid ?? null) {
+            $locationModels = SimpleJobsLocationModel::findBy('pid', $dc->activeRecord->pid);
+            if (null !== $locationModels) {
+                while($locationModels->next()) {
+                    $locations[$locationModels->id] = SimpleJobsLocationModel::getDisplayName($locationModels->current());
+                }
+            }
+        }
+        return $locations;
+    }
 
     /**
 	 * Set the timestamp to 00:00:00

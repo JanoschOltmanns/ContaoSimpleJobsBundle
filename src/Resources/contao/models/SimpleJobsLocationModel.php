@@ -28,4 +28,15 @@ class SimpleJobsLocationModel extends Model {
         return static::findBy($arrColumns, null, $arrOptions);
     }
 
+    /**
+     * @return string
+     */
+    public static function getDisplayName(SimpleJobsLocationModel $jobsLocationModel) {
+        $name = $jobsLocationModel->addressLocality;
+        if ($jobsLocationModel->streetAddress) {
+            $name .= ', ' . $jobsLocationModel->streetAddress;
+        }
+        return $name;
+    }
+
 }
