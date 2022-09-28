@@ -35,7 +35,7 @@ class ModuleSimpleJobsFilter extends Module {
 
             $objTemplate = new BackendTemplate('be_wildcard');
 
-            $objTemplate->wildcard = '##' . $GLOBALS['TL_LANG']['MOD']['simplejobsfilter'][0] . '##';
+            $objTemplate->wildcard = '##' . $GLOBALS['TL_LANG']['FMD']['simplejobsfilter'][0] . '##';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
