@@ -1,13 +1,17 @@
 <?php
 
 
+use Contao\Backend;
+use Contao\DC_Table;
+use Contao\System;
+
 $GLOBALS['TL_DCA']['tl_simple_jobs_location'] = array
 (
 
 	// Config
 	'config' => array
 	(
-		'dataContainer'               => 'Table',
+		'dataContainer'               => DC_Table::class,
 		'ptable'                      => 'tl_simple_jobs_organisation',
 		//'switchToEdit'                => true,
 		'enableVersioning'            => true,
@@ -201,7 +205,7 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_location'] = array
 			'eval'                    => array('mandatory'=>true, 'includeBlankOption'=>true, 'chosen'=>true, 'tl_class'=>'w50'),
 			'options_callback' => function ()
 			{
-				return System::getCountries();
+				return System::getContainer()->get('contao.intl.countries')->getCountries();
 			},
 			'sql'                     => "varchar(2) NOT NULL default ''"
         ),
@@ -218,7 +222,7 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_location'] = array
 );
 
 
-class tl_simple_jobs_location extends \Contao\Backend {
+class tl_simple_jobs_location extends Backend {
 
     public function listLocations($arrRow) {
 		return '<div>' . $arrRow['postalCode'] . ' ' . $arrRow['addressLocality'] . ', ' . $arrRow['streetAddress'] . '</div>';

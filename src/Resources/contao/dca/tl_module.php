@@ -1,6 +1,8 @@
 <?php
 
 // Add palettes to tl_module
+use Contao\Backend;
+
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'simplejobs_addCategoryFilter';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['simplejobslist'] = '{title_legend},name,headline,type;{config_legend},simplejobs_organisations,simplejobs_hardlimit,simplejobs_addCategoryFilter;{template_legend:hide},simplejobs_postingtemplate,customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
@@ -73,7 +75,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['simplejobs_respectFilters'] = [
  * Provide miscellaneous methods that are used by the data configuration array.
  *
  */
-class tl_module_simplejobs extends \Contao\Backend
+class tl_module_simplejobs extends Backend
 {
 
     /**
@@ -82,7 +84,6 @@ class tl_module_simplejobs extends \Contao\Backend
     public function __construct()
     {
         parent::__construct();
-        $this->import('BackendUser', 'User');
     }
 
     /**

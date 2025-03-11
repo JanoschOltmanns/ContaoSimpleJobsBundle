@@ -3,12 +3,19 @@
 namespace JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Modules;
 
 use Contao\BackendTemplate;
+use Contao\Config;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\Environment;
+use Contao\FrontendTemplate;
+use Contao\Input;
 use Contao\Module;
+use Contao\PageModel;
+use Contao\StringUtil;
+use Contao\System;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Classes\StructuredJobPostingData;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsPostingModel;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Entity\JobPosting;
+use Symfony\Component\HttpFoundation\Request;
 
 class ModuleSimpleJobsReader extends Module {
 
@@ -26,8 +33,9 @@ class ModuleSimpleJobsReader extends Module {
      */
     public function generate()
     {
-        if (TL_MODE == 'BE') {
-
+        if (System::getContainer()->get('contao.routing.scope_matcher')
+            ->isBackendRequest(System::getContainer()->get('request_stack')->getCurrentRequest() ?? Request::create(''))
+        ) {
             $objTemplate = new BackendTemplate('be_wildcard');
 
             $objTemplate->wildcard = '##' . $GLOBALS['TL_LANG']['FMD']['simplejobsreader'][0] . '##';
@@ -40,13 +48,13 @@ class ModuleSimpleJobsReader extends Module {
         }
 
 		// Set the item from the auto_item parameter
-		if (!isset($_GET['items']) && \Config::get('useAutoItem') && isset($_GET['auto_item']))
+		if (!isset($_GET['items']) && Config::get('useAutoItem') && isset($_GET['auto_item']))
 		{
-			\Input::setGet('items', \Input::get('auto_item'));
+			Input::setGet('items', Input::get('auto_item'));
 		}
 
 		// Return an empty string if "items" is not set (to combine list and reader on same page)
-		if (!\Input::get('items'))
+		if (!Input::get('items'))
 		{
 			return '';
 		}
@@ -57,12 +65,12 @@ class ModuleSimpleJobsReader extends Module {
     protected function compile()
     {
 
-        /** @var \PageModel $objPage */
+        /** @var PageModel $objPage */
 		global $objPage;
 
-        $postingTemplate = new \FrontendTemplate($this->simplejobs_postingtemplate);
+        $postingTemplate = new FrontendTemplate($this->simplejobs_postingtemplate);
 
-        $jobPostingModel = SimpleJobsPostingModel::findPublishedByIdOrAlias(\Input::get('items'));
+        $jobPostingModel = SimpleJobsPostingModel::findPublishedByIdOrAlias(Input::get('items'));
 
         if (null === $jobPostingModel)
 		{
@@ -78,7 +86,7 @@ class ModuleSimpleJobsReader extends Module {
 
         if ($jobPosting->getTitle() != '')
 		{
-			$objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($jobPosting->getTitle()));
+			$objPage->pageTitle = strip_tags(StringUtil::stripInsertTags($jobPosting->getTitle()));
 		}
 
         $postingTemplate->setData($jobPosting->getTemplateData(true));

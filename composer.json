@@ -1,7 +1,7 @@
 {
   "name": "janoscholtmanns/contao-simple-jobs-bundle",
   "type": "contao-bundle",
-  "description": "Contao 4 bundle for simple job offers",
+  "description": "Contao bundle for simple job offers",
   "license": "LGPL-3.0+",
   "authors": [
     {
@@ -10,8 +10,8 @@
   ],
   "require": {
     "ext-json": "*",
-    "php": "^7.2 || ^8.0",
-    "contao/core-bundle": "^4.9"
+    "php": "^7.4 || ^8.1",
+    "contao/core-bundle": "^4.13 || ^5.3"
   },
   "conflict": {
     "contao/core": "*",

@@ -3,11 +3,13 @@
 namespace JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Modules;
 
 
+use Contao\Frontend;
+use Contao\Input;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsOrganisationModel;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsPostingModel;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Entity\JobPosting;
 
-class ModuleSimpleJobs extends \Contao\Frontend {
+class ModuleSimpleJobs extends Frontend {
 
 /**
 	 * Add Jobpostings to the indexer
@@ -28,7 +30,7 @@ class ModuleSimpleJobs extends \Contao\Frontend {
 		}
 
 		$arrProcessed = array();
-		$time = \Date::floorToMinute();
+		$time = \Contao\Date::floorToMinute();
 
 		// Get all categories
 		$objOrganisations = SimpleJobsOrganisationModel::findAll();
@@ -59,7 +61,7 @@ class ModuleSimpleJobs extends \Contao\Frontend {
 	public function jobsReplaceInsertTags($strTag) {
         $arrSplit = explode('::', $strTag);
         if (isset($arrSplit[0]) && $arrSplit[0] === 'job') {
-            $jobPostingModel = SimpleJobsPostingModel::findByIdOrAlias(\Input::get('items'));
+            $jobPostingModel = SimpleJobsPostingModel::findByIdOrAlias(Input::get('items'));
             if ($jobPostingModel !== null) {
                 return $jobPostingModel->{$arrSplit[1]};
             }
