@@ -1,0 +1,5 @@
+services:
+    _defaults:
+        autoconfigure: true
+
+    JanoschOltmanns\ContaoSimpleJobsBundle\EventListener\SitemapListener: ~

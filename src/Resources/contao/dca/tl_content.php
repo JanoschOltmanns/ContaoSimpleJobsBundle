@@ -1,6 +1,8 @@
 <?php
 
 // Add palettes to tl_content
+use Contao\Backend;
+
 $GLOBALS['TL_DCA']['tl_content']['palettes']['simple_jobs_entry'] = '{type_legend},type,headline;{include_legend},simplejobs_posting,simplejobs_addstructureddata;{template_legend:hide},simplejobs_postingtemplate,customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID;{invisible_legend:hide},invisible,start,stop';
 
 
@@ -36,7 +38,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['simplejobs_postingtemplate'] = [
  * Provide miscellaneous methods that are used by the data configuration array.
  *
  */
-class tl_content_simplejobs extends \Backend
+class tl_content_simplejobs extends Backend
 {
 
     /**
@@ -45,7 +47,6 @@ class tl_content_simplejobs extends \Backend
     public function __construct()
     {
         parent::__construct();
-        $this->import('BackendUser', 'User');
     }
 
     /**
@@ -55,6 +56,6 @@ class tl_content_simplejobs extends \Backend
      */
     public function getJobPostingTemplates()
     {
-        return $this->getTemplateGroup('jobposting_');
+        return self::getTemplateGroup('jobposting_');
     }
 }

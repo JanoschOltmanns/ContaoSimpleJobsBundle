@@ -3,6 +3,7 @@
 namespace JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Elements;
 
 use Contao\ContentElement;
+use Contao\FrontendTemplate;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Classes\StructuredJobPostingData;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsPostingModel;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Entity\JobPosting;
@@ -21,7 +22,7 @@ class ContentSimpleJobsEntry extends ContentElement {
 	protected function compile()
 	{
 
-        $postingTemplate = new \FrontendTemplate($this->simplejobs_postingtemplate);
+        $postingTemplate = new FrontendTemplate($this->simplejobs_postingtemplate);
 
         $jobPostingModel = SimpleJobsPostingModel::findByIdOrAlias($this->simplejobs_posting);
 

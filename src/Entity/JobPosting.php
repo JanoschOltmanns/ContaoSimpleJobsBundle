@@ -3,8 +3,8 @@
 namespace JanoschOltmanns\ContaoSimpleJobsBundle\Entity;
 
 use Contao\Config;
-use Contao\Controller;
 use Contao\Date;
+use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsPostingModel;
@@ -24,19 +24,19 @@ class JobPosting {
     }
 
     public function getDescription() {
-        return Controller::replaceInsertTags($this->contaoModel->description);
+        return System::getContainer()->get('contao.insert_tag.parser')->replace($this->contaoModel->description);
     }
 
     public function getKeywords() {
         $keywords = StringUtil::deserialize($this->contaoModel->keywords);
-        if (sizeof($keywords) === 1 && $keywords[0] === '') {
+        if (count($keywords) === 1 && $keywords[0] === '') {
             return null;
         }
         return $keywords;
     }
 
     public function getTitle() {
-        return Controller::replaceInsertTags($this->contaoModel->title);
+        return System::getContainer()->get('contao.insert_tag.parser')->replace($this->contaoModel->title);
     }
 
     public function getEmploymentTypes() {
@@ -80,7 +80,7 @@ class JobPosting {
 
     public function getSalaryCurrency() {
         $value = StringUtil::deserialize($this->contaoModel->salaryValue);
-        return isset($value['unit']) ? $value['unit'] : '';
+        return $value['unit'] ?? '';
     }
 
     public function getSalaryValueMin() {
@@ -124,7 +124,7 @@ class JobPosting {
     public function getReadableEmploymentTypes() {
         $readableEmploymentTypes = [];
         foreach ($this->getEmploymentTypes() as $employmentType) {
-            $readableEmploymentTypes[] = $GLOBALS['TL_LANG']['tl_simple_jobs_posting']['employmentTypeReference'][$employmentType];
+            $readableEmploymentTypes[] = &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['employmentTypeReference'][$employmentType];
         }
         return $readableEmploymentTypes;
     }
@@ -135,21 +135,21 @@ class JobPosting {
 
         $category = $this->contaoModel->getRelated('category');
         if (null !== $category && $category->jumpTo) {
-            $page = \PageModel::findWithDetails($category->jumpTo);
+            $page = PageModel::findWithDetails($category->jumpTo);
         };
 
         if (null === $page) {
             $organisation = $this->contaoModel->getRelated('pid');
             if (null !== $organisation) {
-                $page = \PageModel::findWithDetails($organisation->jumpTo);
+                $page = PageModel::findWithDetails($organisation->jumpTo);
             }
         }
 
         if (null !== $page) {
             if ($absolute) {
-                $link = $page->getAbsoluteUrl((\Config::get('useAutoItem') ? '/' : '/items/') . ($this->contaoModel->alias ?: $this->contaoModel->id));
+                $link = $page->getAbsoluteUrl((Config::get('useAutoItem') ? '/' : '/items/') . ($this->contaoModel->alias ?: $this->contaoModel->id));
             } else {
-                $link = $page->getFrontendUrl((\Config::get('useAutoItem') ? '/' : '/items/') . ($this->contaoModel->alias ?: $this->contaoModel->id));
+                $link = $page->getFrontendUrl((Config::get('useAutoItem') ? '/' : '/items/') . ($this->contaoModel->alias ?: $this->contaoModel->id));
             }
         }
 

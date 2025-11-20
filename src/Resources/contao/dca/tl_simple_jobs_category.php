@@ -1,11 +1,13 @@
 <?php
 
+use Contao\DC_Table;
+
 $GLOBALS['TL_DCA']['tl_simple_jobs_category'] = array
 (
     // Config
     'config' => array
     (
-        'dataContainer'               => 'Table',
+        'dataContainer'               => DC_Table::class,
         'enableVersioning'            => true,
         'markAsCopy'                  => 'title',
         'onload_callback' => array

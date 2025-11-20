@@ -1,13 +1,16 @@
 <?php
 
 
+use Contao\Backend;
+use Contao\DC_Table;
+
 $GLOBALS['TL_DCA']['tl_simple_jobs_organisation'] = array
 (
 
     // Config
     'config' => array
     (
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ctable' => array('tl_simple_jobs_location', 'tl_simple_jobs_posting'),
         'switchToEdit' => true,
         'enableVersioning' => true,
@@ -130,7 +133,7 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_organisation'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_organisation']['logo'],
 			'exclude'                 => true,
 			'inputType'               => 'fileTree',
-			'eval'                    => array('fieldType'=>'radio', 'filesOnly'=>true, 'extensions'=>Config::get('validImageTypes'), 'mandatory'=>true, 'tl_class'=>'clr'),
+			'eval'                    => array('fieldType'=>'radio', 'filesOnly'=>true, 'extensions'=>\Contao\Config::get('validImageTypes'), 'mandatory'=>true, 'tl_class'=>'clr'),
 			'sql'                     => "binary(16) NULL"
         ],
         'teaser' => [
@@ -167,7 +170,7 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_organisation'] = array
  * Provide miscellaneous methods that are used by the data configuration array.
  *
  */
-class tl_simple_jobs_organisation extends \Contao\Backend
+class tl_simple_jobs_organisation extends Backend
 {
 
     /**

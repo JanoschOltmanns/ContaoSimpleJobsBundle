@@ -4,7 +4,6 @@ namespace JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Modules;
 
 use Contao\BackendTemplate;
 use Contao\Environment;
-use Contao\FormSelectMenu;
 use Contao\Input;
 use Contao\Module;
 use Contao\PageModel;
@@ -14,6 +13,7 @@ use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsCategoryModel
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsLocationModel;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsOrganisationModel;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsPostingModel;
+use Symfony\Component\HttpFoundation\Request;
 
 class ModuleSimpleJobsFilter extends Module {
 
@@ -31,7 +31,9 @@ class ModuleSimpleJobsFilter extends Module {
      */
     public function generate()
     {
-        if (TL_MODE == 'BE') {
+        if (System::getContainer()->get('contao.routing.scope_matcher')
+            ->isBackendRequest(System::getContainer()->get('request_stack')->getCurrentRequest() ?? Request::create(''))
+        ) {
 
             $objTemplate = new BackendTemplate('be_wildcard');
 
@@ -211,7 +213,10 @@ class ModuleSimpleJobsFilter extends Module {
             'label' => $GLOBALS['TL_LANG']['MSC']['simple_jobs_filterReference'][$name] ?? $name,
             'value' => Input::get($name)
         ];
-        $select = new FormSelectMenu($fieldAttributes);
+
+        $formSelectMenuClass = class_exists('\Contao\SelectMenu') ? '\Contao\SelectMenu': '\Contao\FormSelectMenu';
+
+        $select = new $formSelectMenuClass($fieldAttributes);
         $arrOptions = [
             [
                 'value' => '',

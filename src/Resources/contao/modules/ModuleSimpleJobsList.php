@@ -3,11 +3,14 @@
 namespace JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Modules;
 
 use Contao\BackendTemplate;
+use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\Module;
 use Contao\StringUtil;
+use Contao\System;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsPostingModel;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Entity\JobPosting;
+use Symfony\Component\HttpFoundation\Request;
 
 class ModuleSimpleJobsList extends Module {
 
@@ -25,8 +28,9 @@ class ModuleSimpleJobsList extends Module {
      */
     public function generate()
     {
-        if (TL_MODE == 'BE') {
-
+        if (System::getContainer()->get('contao.routing.scope_matcher')
+            ->isBackendRequest(System::getContainer()->get('request_stack')->getCurrentRequest() ?? Request::create(''))
+        ) {
             $objTemplate = new BackendTemplate('be_wildcard');
 
             $objTemplate->wildcard = '##' . $GLOBALS['TL_LANG']['FMD']['simplejobslist'][0] . '##';
@@ -38,7 +42,8 @@ class ModuleSimpleJobsList extends Module {
             return $objTemplate->parse();
         }
 
-		$this->simplejobs_organisations = \StringUtil::deserialize($this->simplejobs_organisations);
+		$this->simplejobs_organisations = StringUtil::deserialize($this->simplejobs_organisations);
+
 
 		// Return if there are no organisations
 		if (empty($this->simplejobs_organisations) || !\is_array($this->simplejobs_organisations))
@@ -82,6 +87,8 @@ class ModuleSimpleJobsList extends Module {
             $filters['organisation'] = Input::get('organisation');
         }
 
+
+
         if ($this->simplejobs_addCategoryFilter) {
             $categories = StringUtil::deserialize($this->simplejobs_categories, true);
             $jobPostings = SimpleJobsPostingModel::findPublishedByPidsAndCategories($this->simplejobs_organisations, $categories, $filters, $arrOptions);
@@ -94,7 +101,7 @@ class ModuleSimpleJobsList extends Module {
 
                 $jobPosting = new JobPosting($jobPostings->current());
 
-                $postingTemplate = new \FrontendTemplate($this->simplejobs_postingtemplate);
+                $postingTemplate = new FrontendTemplate($this->simplejobs_postingtemplate);
 
                 $postingTemplate->setData($jobPosting->getTemplateData());
 

@@ -2,7 +2,7 @@
 
 namespace JanoschOltmanns\ContaoSimpleJobsBundle\Entity;
 
-use Contao\Controller;
+use Contao\System;
 use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsLocationModel;
 
 class Location {
@@ -30,13 +30,15 @@ class Location {
     {
         $this->contaoModel = $contaoLocationnModel;
 
-        $this->street = Controller::replaceInsertTags($this->contaoModel->streetAddress);
+        $insertTagParser = System::getContainer()->get('contao.insert_tag.parser');
 
-        $this->zipcode = Controller::replaceInsertTags($this->contaoModel->postalCode);
+        $this->street = $insertTagParser->replace($this->contaoModel->streetAddress);
 
-        $this->city = Controller::replaceInsertTags($this->contaoModel->addressLocality);
+        $this->zipcode = $insertTagParser->replace($this->contaoModel->postalCode);
 
-        $this->region = Controller::replaceInsertTags($this->contaoModel->addressRegion);
+        $this->city = $insertTagParser->replace($this->contaoModel->addressLocality);
+
+        $this->region = $insertTagParser->replace($this->contaoModel->addressRegion);
 
         $this->country = strtoupper($this->contaoModel->addressCountry);
     }

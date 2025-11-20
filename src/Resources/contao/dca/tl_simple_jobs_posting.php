@@ -1,6 +1,19 @@
 <?php
 
-Contao\System::loadLanguageFile('tl_content');
+use Contao\Automator;
+use Contao\Backend;
+use Contao\Config;
+use Contao\CoreBundle\Exception\AccessDeniedException;
+use Contao\DataContainer;
+use Contao\DC_Table;
+use Contao\Image;
+use Contao\Input;
+use Contao\StringUtil;
+use Contao\System;
+use Contao\Versions;
+use JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsOrganisationModel;
+
+System::loadLanguageFile('tl_content');
 
 $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
 (
@@ -8,7 +21,7 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
 	// Config
 	'config' => array
 	(
-		'dataContainer'               => 'Table',
+		'dataContainer'               => DC_Table::class,
 		'ptable'                      => 'tl_simple_jobs_organisation',
 		//'switchToEdit'                => true,
 		'enableVersioning'            => true,
@@ -308,7 +321,7 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
             'label'                   => &$GLOBALS['TL_LANG']['tl_content']['singleSRC'],
             'exclude'                 => true,
             'inputType'               => 'fileTree',
-            'eval'                    => array('fieldType'=>'radio', 'filesOnly'=>true, 'extensions'=>Contao\Config::get('validImageTypes'), 'mandatory'=>true),
+            'eval'                    => array('fieldType'=>'radio', 'filesOnly'=>true, 'extensions'=>Config::get('validImageTypes'), 'mandatory'=>true),
             'sql'                     => "binary(16) NULL"
         ),
         'alt' => array
@@ -360,7 +373,7 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
             'label'                   => &$GLOBALS['TL_LANG']['tl_simple_jobs_posting']['enclosure'],
             'exclude'                 => true,
             'inputType'               => 'fileTree',
-            'eval'                    => array('multiple'=>true, 'fieldType'=>'checkbox', 'filesOnly'=>true, 'isDownloads'=>true, 'extensions'=>\Contao\Config::get('allowedDownload'), 'mandatory'=>true, 'orderField'=>'orderEnclosure'),
+            'eval'                    => array('multiple'=>true, 'fieldType'=>'checkbox', 'filesOnly'=>true, 'isDownloads'=>true, 'extensions'=> Config::get('allowedDownload'), 'mandatory'=>true, 'orderField'=>'orderEnclosure'),
             'sql'                     => "blob NULL"
         ),
         'orderEnclosure' => array
@@ -402,7 +415,7 @@ $GLOBALS['TL_DCA']['tl_simple_jobs_posting'] = array
 );
 
 
-class tl_simple_jobs_posting extends \Contao\Backend {
+class tl_simple_jobs_posting extends Backend {
 
     /**
      * Import the back end user object
@@ -420,15 +433,15 @@ class tl_simple_jobs_posting extends \Contao\Backend {
      * @return string
      */
     public function listJob($arrRow) {
-		return '<div><span class="tl_gray">' . \Date::parse(\Config::get('dateFormat'), $arrRow['datePosted']) . ':</span> ' . \StringUtil::restoreBasicEntities($arrRow['title']) . '</div>';
+		return '<div><span class="tl_gray">' . \Contao\Date::parse(Config::get('dateFormat'), $arrRow['datePosted']) . ':</span> ' . StringUtil::restoreBasicEntities($arrRow['title']) . '</div>';
     }
 
     /**
      * @param string $varValue
-     * @param \Contao\DataContainer $dc
+     * @param DataContainer $dc
      * @return string
      */
-	public function generateAlias(string $varValue, \Contao\DataContainer $dc)
+	public function generateAlias(string $varValue, DataContainer $dc)
 	{
         $aliasExists = function (string $alias) use ($dc): bool
         {
@@ -438,9 +451,9 @@ class tl_simple_jobs_posting extends \Contao\Backend {
         // Generate alias if there is none
         if (!$varValue)
         {
-            $varValue = \Contao\System::getContainer()->get('contao.slug')->generate(
+            $varValue = System::getContainer()->get('contao.slug')->generate(
                 $dc->activeRecord->title,
-                \JanoschOltmanns\ContaoSimpleJobsBundle\Contao\Models\SimpleJobsOrganisationModel::findByPk($dc->activeRecord->pid)->jumpTo,
+                SimpleJobsOrganisationModel::findByPk($dc->activeRecord->pid)->jumpTo,
                 $aliasExists
             );
         }
@@ -468,8 +481,8 @@ class tl_simple_jobs_posting extends \Contao\Backend {
      */
     public function adjustSitemap()
 	{
-		$this->import('Automator');
-		$this->Automator->generateSitemap();
+        $automater = new Automator();
+        $automater->generateSitemap();
 	}
 
     /**
@@ -486,10 +499,10 @@ class tl_simple_jobs_posting extends \Contao\Backend {
      */
     public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
     {
-        if (\Contao\Input::get('tid'))
+        if (Input::get('tid'))
         {
-            $this->toggleVisibility(\Contao\Input::get('tid'), (\Contao\Input::get('state') == 1), (@func_get_arg(12) ?: null));
-            $this->redirect($this->getReferer());
+            $this->toggleVisibility(Input::get('tid'), (Input::get('state') == 1), (@func_get_arg(12) ?: null));
+            self::redirect(self::getReferer());
         }
 
         // Check permissions AFTER checking the tid, so hacking attempts are logged
@@ -505,7 +518,7 @@ class tl_simple_jobs_posting extends \Contao\Backend {
             $icon = 'invisible.svg';
         }
 
-        return '<a href="' . $this->addToUrl($href) . '" title="' . \Contao\StringUtil::specialchars($title) . '"' . $attributes . '>' . \Contao\Image::getHtml($icon, $label, 'data-state="' . ($row['published'] ? 1 : 0) . '"') . '</a> ';
+        return '<a href="' . self::addToUrl($href) . '" title="' . StringUtil::specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label, 'data-state="' . ($row['published'] ? 1 : 0) . '"') . '</a> ';
     }
 
     /**
@@ -513,13 +526,13 @@ class tl_simple_jobs_posting extends \Contao\Backend {
      *
      * @param integer              $intId
      * @param boolean              $blnVisible
-     * @param \Contao\DataContainer $dc
+     * @param DataContainer $dc
      */
-    public function toggleVisibility($intId, $blnVisible, \Contao\DataContainer $dc=null)
+    public function toggleVisibility($intId, $blnVisible, DataContainer $dc=null)
     {
         // Set the ID and action
-        \Contao\Input::setGet('id', $intId);
-        \Contao\Input::setGet('act', 'toggle');
+        Input::setGet('id', $intId);
+        Input::setGet('act', 'toggle');
 
         if ($dc)
         {
@@ -529,7 +542,7 @@ class tl_simple_jobs_posting extends \Contao\Backend {
         // Check the field access
         if (!$this->User->hasAccess('tl_simple_jobs_posting::published', 'alexf'))
         {
-            throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to publish/unpublish job posting ID ' . $intId . '.');
+            throw new AccessDeniedException('Not enough permissions to publish/unpublish job posting ID ' . $intId . '.');
         }
 
         $objRow = $this->Database->prepare("SELECT * FROM tl_simple_jobs_posting WHERE id=?")
@@ -538,7 +551,7 @@ class tl_simple_jobs_posting extends \Contao\Backend {
 
         if ($objRow->numRows < 1)
         {
-            throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid job posting ID ' . $intId . '.');
+            throw new AccessDeniedException('Invalid job posting ID ' . $intId . '.');
         }
 
         // Set the current record
@@ -547,7 +560,7 @@ class tl_simple_jobs_posting extends \Contao\Backend {
             $dc->activeRecord = $objRow;
         }
 
-        $objVersions = new \Contao\Versions('tl_simple_jobs_posting', $intId);
+        $objVersions = new Versions('tl_simple_jobs_posting', $intId);
         $objVersions->initialize();
 
         // Trigger the save_callback
